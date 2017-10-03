@@ -21,10 +21,6 @@
   justify-content: center;
 }
 
-.piano-key:active {
-  background-color: gray;
-}
-
 #keyboard-dashboard {
   display: flex;
   justify-content: center;
@@ -52,15 +48,11 @@
   justify-content: center
 }
 
-.sharp-key:active {
-  background-color: gray;
-}
-
 .key-label {
   align-self: flex-end;
   margin-bottom: 10px;
 }
 
 .opacity {
-  opacity: 1;
+  background-color: gray;
 }

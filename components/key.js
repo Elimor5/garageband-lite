@@ -9,17 +9,35 @@ class Key {
   renderNote(sharp){
     const sharpkey = sharp ? "sharp-key" : "";
     const pianoKey = sharp ? "" : "piano-key";
-    const keyDiv =  $(`<div id=${this.note} class="${sharpkey} ${pianoKey}">
+    this.keyDiv =  $(`<div id=${this.note} class="${sharpkey} ${pianoKey}">
                         <span class="key-label">${this.keyboardChar}</span>
                        </div>`);
+    this.addListener(this.keyDiv,"mouse");
+    this.addListener($(document),"key");
+    return this.keyDiv;
+  }
 
-    keyDiv.on("mousedown", (e) => {
+  addListener(element,listener) {
+    const currentKeyChar = this.keyboardChar;
+    const currentKey = this;
+
+    element.on(`${listener}down`, (e) => {
       e.stopPropagation();
-      this.sound.play();
-      keyDiv.addClass("opacity");
-      console.log(this.note);
+
+      if (listener === "mouse" || e.key === currentKeyChar) {
+        this.sound.play();
+        currentKey.keyDiv.addClass("opacity");
+      }
     });
-    return keyDiv;
+
+    element.on(`${listener}up`, (e) => {
+      e.stopPropagation();
+
+      if (listener === "mouse" || e.key === currentKeyChar) {
+        this.sound.load();
+        currentKey.keyDiv.removeClass("opacity");
+      }
+    });
   }
 
   setAudio() {
