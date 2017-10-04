@@ -213,9 +213,15 @@ exports.default = Key;
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _keyboard = __webpack_require__(0);
 
 var _keyboard2 = _interopRequireDefault(_keyboard);
+
+var _linked_list = __webpack_require__(3);
+
+var _linked_list2 = _interopRequireDefault(_linked_list);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -226,9 +232,179 @@ var GaragebandLite = function GaragebandLite() {
 
   this.keyboard = new _keyboard2.default();
   this.keyboard.populateKeys();
+  this.song = new _linked_list2.default();
 };
 
-new GaragebandLite();
+var Node = function () {
+  function Node(note, prevNode, nextNode) {
+    _classCallCheck(this, Node);
+
+    this.prevNode = prevNode;
+    this.nextNode = nextNode;
+    this.note = note;
+    this.startTime = null;
+    this.endTime = null;
+  }
+
+  _createClass(Node, [{
+    key: 'setStartTime',
+    value: function setStartTime(time) {
+      this.startTime = time;
+    }
+  }, {
+    key: 'setEndTime',
+    value: function setEndTime(time) {
+      this.endTime = time;
+    }
+  }]);
+
+  return Node;
+}();
+
+window.garagebandLite = new GaragebandLite();
+
+var song = window.garagebandLite.song;
+
+for (var i = 1; i < 11; i++) {
+  song.append(new Node(i));
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _node = __webpack_require__(4);
+
+var _node2 = _interopRequireDefault(_node);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LinkedList = function () {
+  function LinkedList() {
+    _classCallCheck(this, LinkedList);
+
+    this.head = new _node2.default("head");
+    this.tail = new _node2.default("tail");
+    this.head.nextNode = this.tail;
+    this.tail.prevNode = this.head;
+    this.nodes = [this.head, this.tail];
+  }
+
+  _createClass(LinkedList, [{
+    key: "append",
+    value: function append(node) {
+      var lastNode = this.tail.prevNode;
+
+      node.prevNode = lastNode;
+      node.nextNode = this.tail;
+      this.tail.prevNode = node;
+      lastNode.nextNode = node;
+      this.nodes.push(node);
+    }
+  }, {
+    key: "find",
+    value: function find(note, node) {
+      if (!node) node = this.head;
+      if (note === node.note) {
+        return node;
+      } else if (node === this.tail) {
+        return -1;
+      } else {
+        return this.find(note, node.nextNode);
+      }
+    }
+  }, {
+    key: "delete",
+    value: function _delete(note) {
+      var node = this.find(note);
+
+      if (node === -1) {
+        return -1;
+      } else {
+        var prevNode = node.prevNode;
+        var nextNode = node.nextNode;
+
+        prevNode.nextNode = nextNode;
+        nextNode.prevNode = prevNode;
+      }
+    }
+  }, {
+    key: "returnList",
+    value: function returnList(node) {
+      var currentList = [];
+
+      if (!node) {
+        node = this.head;
+      }
+
+      currentList.push(node);
+
+      if (node === this.tail) {
+        return currentList;
+      } else {
+        return currentList.concat(this.returnList(node.nextNode));
+      }
+    }
+  }]);
+
+  return LinkedList;
+}();
+
+exports.default = LinkedList;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Node = function () {
+  function Node(note, startTime, endTime) {
+    _classCallCheck(this, Node);
+
+    this.prevNode = null;
+    this.nextNode = null;
+    this.note = note;
+    this.startTime = startTime;
+    this.endTime = endTime;
+  }
+
+  _createClass(Node, [{
+    key: "setStartTime",
+    value: function setStartTime(time) {
+      this.startTime = time;
+    }
+  }, {
+    key: "setEndTime",
+    value: function setEndTime(time) {
+      this.endTime = time;
+    }
+  }]);
+
+  return Node;
+}();
+
+exports.default = Node;
 
 /***/ })
 /******/ ]);
