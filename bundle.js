@@ -213,8 +213,6 @@ exports.default = Key;
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _keyboard = __webpack_require__(0);
 
 var _keyboard2 = _interopRequireDefault(_keyboard);
@@ -235,39 +233,34 @@ var GaragebandLite = function GaragebandLite() {
   this.song = new _linked_list2.default();
 };
 
-var Node = function () {
-  function Node(note, prevNode, nextNode) {
-    _classCallCheck(this, Node);
-
-    this.prevNode = prevNode;
-    this.nextNode = nextNode;
-    this.note = note;
-    this.startTime = null;
-    this.endTime = null;
-  }
-
-  _createClass(Node, [{
-    key: 'setStartTime',
-    value: function setStartTime(time) {
-      this.startTime = time;
-    }
-  }, {
-    key: 'setEndTime',
-    value: function setEndTime(time) {
-      this.endTime = time;
-    }
-  }]);
-
-  return Node;
-}();
-
 window.garagebandLite = new GaragebandLite();
 
-var song = window.garagebandLite.song;
-
-for (var i = 1; i < 11; i++) {
-  song.append(new Node(i));
-}
+// class Node {
+//   constructor(note,prevNode,nextNode) {
+//     this.prevNode = prevNode;
+//     this.nextNode = nextNode;
+//     this.note = note;
+//     this.startTime = null;
+//     this.endTime = null;
+//   }
+//
+//   setStartTime(time) {
+//     this.startTime = time;
+//   }
+//
+//   setEndTime(time) {
+//     this.endTime = time;
+//   }
+//
+//
+// }
+//
+//
+// var song = window.garagebandLite.song;
+//
+// for (var i = 1; i < 11; i++) {
+// song.append(new Node(i));
+// }
 
 /***/ }),
 /* 3 */
