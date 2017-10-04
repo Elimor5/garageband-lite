@@ -10,7 +10,7 @@ class Key {
     const sharpkey = sharp ? "sharp-key" : "";
     const pianoKey = sharp ? "" : "piano-key";
     this.keyDiv =  $(`<div id=${this.note} class="${sharpkey} ${pianoKey}">
-                        <span class="key-label">${this.keyboardChar}</span>
+                        <span class="key-label">${this.keyboardChar.toUpperCase()}</span>
                        </div>`);
     this.addListener(this.keyDiv,"mouse");
     this.addListener($(document),"key");
@@ -44,7 +44,7 @@ class Key {
     const note = this.note.slice(0,1).toUpperCase();
     const sharp = (this.note[this.note.length-1] === "#") ? "s" : "";
     const octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
-    this.sound = new Audio (`./assets/piano_samples/${octave}${note}${sharp}.mp3`);
+    this.sound = new Audio (`assets/piano_samples/${octave}${note}${sharp}.mp3`);
   }
 }
 export default Key;
