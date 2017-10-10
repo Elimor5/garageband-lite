@@ -221,6 +221,10 @@ var _linked_list = __webpack_require__(3);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
+var _timer = __webpack_require__(5);
+
+var _timer2 = _interopRequireDefault(_timer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -231,6 +235,7 @@ var GaragebandLite = function GaragebandLite() {
   this.keyboard = new _keyboard2.default();
   this.keyboard.populateKeys();
   this.song = new _linked_list2.default();
+  this.timer = new _timer2.default();
 };
 
 window.garagebandLite = new GaragebandLite();
@@ -398,6 +403,127 @@ var Node = function () {
 }();
 
 exports.default = Node;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Timer = function () {
+  function Timer() {
+    _classCallCheck(this, Timer);
+
+    this.milliseconds = 0;
+    this.seconds = 0;
+    this.minutes = 0;
+    this.paused = false;
+    this.setCurrentTime();
+    this.interval = null;
+    this.timerRunning = false;
+    this.addListeners();
+  }
+
+  _createClass(Timer, [{
+    key: "setCurrentTime",
+    value: function setCurrentTime() {
+      if (this.milliseconds >= 1000) {
+        this.milliseconds -= 1000;
+        this.seconds++;
+      } else if (this.seconds >= 60) {
+        this.seconds -= 60;
+        this.minutes++;
+      }
+
+      var paddedMillisecond = this.milliseconds > 10 ? this.milliseconds.toString().slice(0, 2) : "0" + this.milliseconds;
+      var paddedSecond = this.seconds > 10 ? this.seconds : "0" + this.seconds;
+      var paddedMinute = this.minutes > 10 ? this.minutes : "0" + this.minutes;
+
+      $("#timer").text(paddedMinute + ":" + paddedSecond + ":" + paddedMillisecond);
+    }
+  }, {
+    key: "padTime",
+    value: function padTime() {}
+  }, {
+    key: "resetTimer",
+    value: function resetTimer() {
+      this.milliseconds = 0;
+      this.seconds = 0;
+      this.minutes = 0;
+      this.stopInterval();
+      this.setCurrentTime();
+      this.timerRunning = false;
+    }
+  }, {
+    key: "stopInterval",
+    value: function stopInterval() {
+      window.clearInterval(this.interval);
+    }
+  }, {
+    key: "pauseTimer",
+    value: function pauseTimer() {
+      this.paused = true;
+      this.stopInterval();
+      this.timerRunning = false;
+    }
+  }, {
+    key: "seek",
+    value: function seek(time) {
+      this.milliseconds = time;
+    }
+  }, {
+    key: "runTimer",
+    value: function runTimer() {
+      var _this = this;
+
+      this.interval = setInterval(function () {
+        if (!_this.paused) {
+          _this.milliseconds += 100;
+          _this.setCurrentTime();
+        }
+      }, 100);
+    }
+  }, {
+    key: "addListeners",
+    value: function addListeners() {
+      var _this2 = this;
+
+      $("#record-button").on("click", function () {
+        if (_this2.paused) _this2.paused = false;
+        if (!_this2.timerRunning) _this2.runTimer();
+
+        _this2.timerRunning = true;
+      });
+
+      $("#play-button").on("click", function () {
+        if (_this2.paused) _this2.paused = false;
+        if (!_this2.timerRunning) _this2.runTimer();
+
+        _this2.timerRunning = true;
+      });
+
+      $("#pause-button").on("click", function () {
+        return _this2.pauseTimer();
+      });
+      $("#stop-button").on("click", function () {
+        return _this2.resetTimer();
+      });
+    }
+  }]);
+
+  return Timer;
+}();
+
+exports.default = Timer;
 
 /***/ })
 /******/ ]);

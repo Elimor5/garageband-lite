@@ -10,6 +10,19 @@
   height: 50%;
 }
 
+#music-dashboard {
+  display: flex;
+  flex-direction: column;
+}
+
+#timer-dashboard {
+  height: 29%;
+  width: 20%;
+  align-self: flex-end;
+  background-color: #03A9F4;
+  color: white;
+}
+
 .piano-key {
   height: 222px;
   background-color: white;
@@ -55,4 +68,60 @@
 
 .opacity {
   background-color: gray;
+}
+
+
+#timer-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+
+#timer-holder {
+  display: flex;
+  justify-content: center;
+}
+
+.timer-heading {
+  color: white;
+  font: 24;
+  font-family: sans-serif;
+  margin-left: 8px;
+}
+
+#timer-buttons {
+  display: flex;
+}
+
+.timer-button {
+  margin: 4px 4px 4px 4px;
+}
+
+#record-button {
+  background-image: url("../timer_buttons/record.png");
+  height: 50px;
+  width: 50px;
+  background-size: contain;
+}
+
+#pause-button {
+  background-image: url("../timer_buttons/pause.png");
+  height: 50px;
+  width: 50px;
+  background-size: contain;
+}
+
+#stop-button {
+  background-image: url("../timer_buttons/stop.png");
+  height: 50px;
+  width: 50px;
+  background-size: contain;
+}
+
+#play-button {
+    background-image: url("../timer_buttons/play.png");
+    height: 50px;
+    width: 50px;
+    background-size: contain;
 }
