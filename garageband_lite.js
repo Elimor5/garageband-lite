@@ -1,13 +1,13 @@
 import Keyboard from './components/keyboard';
 import LinkedList from './components/linked_list';
-import Timer from './components/timer';
+import Dashboard from './components/Dashboard';
 
 class GaragebandLite {
   constructor() {
     this.keyboard = new Keyboard();
     this.keyboard.populateKeys();
     this.song = new LinkedList();
-    this.timer = new Timer();
+    this.dashboard = new Dashboard(this.keyboard);
   }
 }
 

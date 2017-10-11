@@ -6,6 +6,7 @@ class Keyboard {
     this.notes = ['c','d','e','f','g','a','b','c2','d2','e2'];
     this.keyboardChars = "asdfghjkl;".split("");
     this.sharpChars = "wetyuop".split("");
+    this.instrument = 'piano';
     this.octave = 3;
   }
 
@@ -13,6 +14,7 @@ class Keyboard {
     for (let i = 0; i < this.notes.length; i++ ) {
       let key = new Key(this.notes[i], this.octave, this.keyboardChars[i]);
       $("#keyboard").append(key.renderNote());
+      this.keys.push(key);
     }
 
     let sharpCharsIndex = 0;
@@ -29,6 +31,13 @@ class Keyboard {
         currentKey.addClass('sharp-key-holder');
 
       }
+    });
+  }
+
+  updateKeys() {
+    this.keys.forEach((key) => {
+      key.octave = this.octave;
+      key.setAudio(this.instrument);
     });
   }
 }

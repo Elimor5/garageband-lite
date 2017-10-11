@@ -3,7 +3,7 @@ class Key {
     this.note = note;
     this.octave = octave;
     this.keyboardChar = keyboardChar;
-    this.setAudio();
+    this.setAudio('piano');
   }
 
   renderNote(sharp){
@@ -40,11 +40,11 @@ class Key {
     });
   }
 
-  setAudio() {
+  setAudio(instrument) {
     const note = this.note.slice(0,1).toUpperCase();
     const sharp = (this.note[this.note.length-1] === "#") ? "s" : "";
     const octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
-    this.sound = new Audio (`assets/piano_samples/${octave}${note}${sharp}.mp3`);
+    this.sound = new Audio (`assets/${instrument}_samples/${octave}${note}${sharp}.mp3`);
   }
 }
 export default Key;
