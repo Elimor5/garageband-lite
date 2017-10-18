@@ -9,10 +9,11 @@ class InstrumentsModal {
   populateModal(callback){
     this.instruments.forEach((instrument) => {
       let src = this.instrumentImage[instrument];
+
       $("#instruments-modal").append(`
-        <div id="${instrument}-image" class="modal-image">
+        <div class="modal-image ${instrument}-image">
         </div>`);
-        debugger
+
       $(`#${instrument}-image`).on("click",() => {
         callback(instrument);
       });

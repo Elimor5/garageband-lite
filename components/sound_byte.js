@@ -1,5 +1,5 @@
-class SoundClip {
+class SoundByte {
   constructor() {
-    
+
   }
 }

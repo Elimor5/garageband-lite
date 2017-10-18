@@ -9,13 +9,20 @@ class Dashboard {
     this.modal = new InstrumentsModal();
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
+    this.selectedInstrument = [];
   }
 
   addInstrument(instrumentType) {
+    const id = this.instruments.length;
+    const newInstrument = new Instrument(id, instrumentType);
     // instrument = new Instrument(instrumentType);
-    debugger
     this.instruments.push(instrumentType);
     this.updateKeyboard(instrumentType);
+    this.updateSelectedInstrument(instrumentType);
+  }
+
+  updateSelectedInstrument(instrument) {
+    this.selectedInstrument = instrument;
   }
 
   updateKeyboard(instrumentType) {
