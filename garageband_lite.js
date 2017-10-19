@@ -11,6 +11,7 @@ class GaragebandLite {
   }
 }
 
+
 window.garagebandLite = new GaragebandLite();
 
 // class Node {

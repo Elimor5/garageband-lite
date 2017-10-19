@@ -15,10 +15,9 @@ class Dashboard {
   addInstrument(instrumentType) {
     const id = this.instruments.length;
     const newInstrument = new Instrument(id, instrumentType);
-    // instrument = new Instrument(instrumentType);
-    this.instruments.push(instrumentType);
+    this.instruments.push(newInstrument);
     this.updateKeyboard(instrumentType);
-    this.updateSelectedInstrument(instrumentType);
+    this.updateSelectedInstrument(newInstrument);
   }
 
   updateSelectedInstrument(instrument) {

@@ -112,10 +112,9 @@ var Dashboard = function () {
     value: function addInstrument(instrumentType) {
       var id = this.instruments.length;
       var newInstrument = new _instrument2.default(id, instrumentType);
-      // instrument = new Instrument(instrumentType);
-      this.instruments.push(instrumentType);
+      this.instruments.push(newInstrument);
       this.updateKeyboard(instrumentType);
-      this.updateSelectedInstrument(instrumentType);
+      this.updateSelectedInstrument(newInstrument);
     }
   }, {
     key: 'updateSelectedInstrument',
@@ -326,51 +325,60 @@ var Instrument = function () {
 
     this.id = id;
     this.instrumentType = instrumentType;
-    this.soundByteContainer = $('<div/>', {
-      id: this.instrumentType + '-' + this.id + '-soundByte',
-      class: "sound-byte-container"
-    });
-    this.instrumentLabel = $('<div/>', {
-      id: this.instrumentType + '-' + this.id + '-label',
-      class: "instrument-label"
-    });
+    this.soundByteContainer = "";
+    this.instrumentLabel = "";
     this.createVisual();
   }
 
   _createClass(Instrument, [{
-    key: 'createVisual',
+    key: "createVisual",
     value: function createVisual() {
+      this.createContainers();
       this.populateInstrumentSelector();
       this.populateSoundByteContainer();
-      $('#timer');
     }
   }, {
-    key: 'populateInstrumentSelector',
+    key: "createContainers",
+    value: function createContainers() {
+      this.soundByteContainer = $('<div/>', {
+        id: this.instrumentType + "-" + this.id + "-soundByte",
+        class: "sound-byte-container"
+      });
+
+      this.instrumentLabel = $('<div/>', {
+        id: this.instrumentType + "-" + this.id + "-label",
+        class: "instrument-label"
+      });
+    }
+  }, {
+    key: "populateInstrumentSelector",
     value: function populateInstrumentSelector() {
       $('.instruments-container').append(this.instrumentLabel);
 
       this.instrumentLabel.append($('<div/>', {
-        id: this.instrumentType + '-label-image',
-        class: "instrument-label-image"
-      })).append($('<div/>', {
-        class: "instrument-label-image"
-
+        class: "instrument-label-image-container"
       }));
 
-      this.instrumentLabel.append($('<p/>', {
+      $('.instrument-label-image-container').append($('<div/>', {
+        class: this.instrumentType + "-image"
+      }));
+
+      this.instrumentLabel.append($('<div/>', {
+        class: "instrument-label-title-container"
+      }));
+
+      $('.instrument-label-title-container').append($('<div/>', {
         class: "instrument-label-title",
-        text: this.instrumentType
+        text: this.instrumentType[0].toUpperCase() + this.instrumentType.slice(1)
       }));
-
-      // .insertBefore($('.dashboard-labels'));
     }
   }, {
-    key: 'populateSoundByteContainer',
+    key: "populateSoundByteContainer",
     value: function populateSoundByteContainer() {
       $('.sound-bytes').append(this.soundByteContainer);
     }
   }, {
-    key: 'addInstrument',
+    key: "addInstrument",
     value: function addInstrument() {
       $(".instrument-selector");
     }
@@ -416,7 +424,7 @@ var InstrumentsModal = function () {
 
         $("#instruments-modal").append("\n        <div class=\"modal-image " + instrument + "-image\">\n        </div>");
 
-        $("#" + instrument + "-image").on("click", function () {
+        $("." + instrument + "-image").on("click", function () {
           callback(instrument);
         });
       });
@@ -609,6 +617,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _ticker = __webpack_require__(9);
+
+var _ticker2 = _interopRequireDefault(_ticker);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Timer = function () {
@@ -623,6 +637,7 @@ var Timer = function () {
     this.interval = null;
     this.timerRunning = false;
     this.addListeners();
+    this.ticker = new _ticker2.default();
   }
 
   _createClass(Timer, [{
@@ -777,6 +792,54 @@ window.garagebandLite = new GaragebandLite();
 // for (var i = 1; i < 11; i++) {
 // song.append(new Node(i));
 // }
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Ticker = function () {
+  function Ticker(timer) {
+    _classCallCheck(this, Ticker);
+
+    this.timer = timer;
+    this.populateDashboardTicker();
+    this.addTicks();
+  }
+
+  _createClass(Ticker, [{
+    key: "populateDashboardTicker",
+    value: function populateDashboardTicker() {
+      $('.sound-bytes').append($("<canvas/>", {
+        class: "timer-ticker-background",
+        id: "timer-ticker"
+      }));
+
+      $('.instruments-container').append($("<div/>", {
+        class: "timer-ticker-background"
+      }));
+    }
+  }, {
+    key: "addTicks",
+    value: function addTicks() {
+      var timer = $("#timer-ticker");
+    }
+  }]);
+
+  return Ticker;
+}();
+
+exports.default = Ticker;
 
 /***/ })
 /******/ ]);

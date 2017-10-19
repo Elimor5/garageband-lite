@@ -1,3 +1,5 @@
+import Ticker from './ticker';
+
 class Timer {
   constructor (){
     this.milliseconds = 0;
@@ -6,8 +8,9 @@ class Timer {
     this.paused = false;
     this.setCurrentTime();
     this.interval = null;
-    this.timerRunning = false
+    this.timerRunning = false;
     this.addListeners();
+    this.ticker = new Ticker();
   }
 
   setCurrentTime() {
@@ -80,7 +83,6 @@ class Timer {
     $("#pause-button").on("click", () => this.pauseTimer());
     $("#stop-button").on("click", () => this.resetTimer());
   }
-
 
 }
 

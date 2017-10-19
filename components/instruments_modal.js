@@ -14,7 +14,7 @@ class InstrumentsModal {
         <div class="modal-image ${instrument}-image">
         </div>`);
 
-      $(`#${instrument}-image`).on("click",() => {
+      $(`.${instrument}-image`).on("click",() => {
         callback(instrument);
       });
     });
