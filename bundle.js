@@ -846,17 +846,11 @@ var Ticker = function () {
         if (i % 50 === 0) {
           var minutes = 0;
           var seconds = i / 10;
-
-          if (seconds >= 60) {
-            seconds -= 60;
-            minutes++;
-          }
-          var paddedTime = this.timer.padTime(null, seconds, minutes);
+          var parsedTime = this.parseTime(seconds, minutes);
+          var paddedTime = this.timer.padTime(null, parsedTime[0], parsedTime[1]);
           var paddedSecond = paddedTime.paddedSecond,
               paddedMinute = paddedTime.paddedMinute;
 
-          // ctx.moveTo(i, c.height - 10);
-          // debugger
 
           ctx.font = "10px Arial";
           ctx.strokeText(paddedMinute + ":" + paddedSecond, i - 12, c.height - 10);
@@ -867,6 +861,15 @@ var Ticker = function () {
         ctx.strokeStyle = '#f1f1f1';
         ctx.stroke();
       }
+    }
+  }, {
+    key: "parseTime",
+    value: function parseTime(seconds, minutes) {
+      if (seconds >= 60) {
+        seconds -= 60;
+        minutes++;
+      }
+      return [seconds, minutes];
     }
   }]);
 

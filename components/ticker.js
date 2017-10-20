@@ -20,16 +20,10 @@ class Ticker {
       if (i % 50 === 0) {
         let minutes = 0;
         let seconds = i / 10;
-
-        if (seconds >= 60) {
-         seconds -= 60;
-         minutes ++;
-       }
-        let paddedTime = this.timer.padTime(null, seconds, minutes);
+        let parsedTime = this.parseTime(seconds, minutes);
+        let paddedTime = this.timer.padTime(null, parsedTime[0], parsedTime[1]);
         let { paddedSecond, paddedMinute } = paddedTime;
 
-        // ctx.moveTo(i, c.height - 10);
-        // debugger
         ctx.font = "10px Arial";
         ctx.strokeText(`${paddedMinute}:${paddedSecond}`,i - 12, c.height - 10);
       }
@@ -40,6 +34,16 @@ class Ticker {
       ctx.stroke();
     }
   }
+
+  parseTime(seconds, minutes) {
+    if (seconds >= 60) {
+     seconds -= 60;
+     minutes ++;
+    }
+    return [seconds, minutes];
+  }
+
+
 }
 
 export default Ticker;
