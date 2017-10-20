@@ -53,7 +53,9 @@ class Ticker {
       let offset = e.offsetX;
 
       clearTimer();
-      this.timer.seconds = Math.floor(offset / 10);
+      const seconds = Math.floor(offset / 10);
+      this.timer.seconds = seconds;
+      this.timer.totalElapsedTime = offset / 10;
       setCurrentTime();
       cursor.seek(offset);
     });

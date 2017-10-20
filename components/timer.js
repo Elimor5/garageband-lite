@@ -1,7 +1,9 @@
 import Cursor from './cursor';
+import Recording from './recording';
 
 class Timer {
-  constructor (){
+  constructor (dashboard){
+    this.totalElapsedTime = 0;
     this.milliseconds = 0;
     this.seconds = 0;
     this.minutes = 0;
@@ -10,6 +12,8 @@ class Timer {
     this.setCurrentTime();
     this.interval = null;
     this.timerRunning = false;
+    this.currentRecording = null;
+    this.dashboard = dashboard;
     this.addListeners();
   }
 
@@ -43,10 +47,12 @@ class Timer {
   }
 
   resetTimer() {
+    this.endCurrentRecording();
     this.clearTimer();
     this.stopInterval();
     this.setCurrentTime();
     this.timerRunning = false;
+    this.paused = true;
     this.cursor.reset();
   }
 
@@ -54,6 +60,7 @@ class Timer {
     this.milliseconds = 0;
     this.seconds = 0;
     this.minutes = 0;
+    this.totalElapsedTime = 0;
   }
 
   stopInterval() {
@@ -62,18 +69,23 @@ class Timer {
 
   pauseTimer() {
     this.paused = true;
+    this.endCurrentRecording();
     this.stopInterval();
     this.timerRunning = false;
   }
 
   seek(time) {
     this.milliseconds = time;
+    this.totalElapsedTime = time;
   }
 
   runTimer() {
     this.interval = setInterval(()=> {
       if (!this.paused) {
         this.milliseconds += 100;
+        this.totalElapsedTime += 0.1;
+        this.totalElapsedTime = Math.round(this.totalElapsedTime * 100) / 100;
+
         this.cursor.run();
         this.setCurrentTime();
       }
@@ -81,23 +93,45 @@ class Timer {
   }
 
   addListeners() {
-    $("#record-button").on("click",() =>{
-      if (this.paused) this.paused = false;
-      if (!this.timerRunning) this.runTimer();
-
-      this.timerRunning = true;
-    });
-
-    $("#play-button").on("click",() =>{
-      if (this.paused) this.paused = false;
-      if (!this.timerRunning) this.runTimer();
-
-      this.timerRunning = true;
-    });
+    this.toggleRecording();
+    this.togglePlay();
 
     $("#pause-button").on("click", () => this.pauseTimer());
     $("#stop-button").on("click", () => this.resetTimer());
   }
+
+  toggleRecording() {
+    $("#record-button").on("click",() =>{
+      this.createNewRecording();
+
+      if (this.paused) this.paused = false;
+      if (!this.timerRunning) this.runTimer();
+
+      this.timerRunning = true;
+    });
+  }
+
+  togglePlay() {
+    $("#play-button").on("click",() =>{
+      this.endCurrentRecording();
+
+      if (this.paused) this.paused = false;
+      if (!this.timerRunning) this.runTimer();
+
+      this.timerRunning = true;
+    });
+  }
+
+  createNewRecording() {
+    this.currentRecording = new Recording(this.dashboard, this.totalElapsedTime);
+    this.dashboard.recordingSuite.push(this.currentRecording);
+  }
+
+  endCurrentRecording() {
+    this.currentRecording.endTime = this.totalElapsedTime;
+    this.currentRecording = null;
+  }
+
 
 }
 

@@ -95,6 +95,10 @@ var _ticker = __webpack_require__(9);
 
 var _ticker2 = _interopRequireDefault(_ticker);
 
+var _recording_suite = __webpack_require__(11);
+
+var _recording_suite2 = _interopRequireDefault(_recording_suite);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -103,13 +107,14 @@ var Dashboard = function () {
   function Dashboard(keyboard) {
     _classCallCheck(this, Dashboard);
 
-    this.timer = new _timer2.default();
+    this.timer = new _timer2.default(this);
     this.instruments = [];
     this.modal = new _instruments_modal2.default();
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
     this.selectedInstrument = [];
     this.ticker = new _ticker2.default(this.timer);
+    this.recordingSuite = new _recording_suite2.default();
   }
 
   _createClass(Dashboard, [{
@@ -627,14 +632,19 @@ var _cursor = __webpack_require__(10);
 
 var _cursor2 = _interopRequireDefault(_cursor);
 
+var _recording = __webpack_require__(12);
+
+var _recording2 = _interopRequireDefault(_recording);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Timer = function () {
-  function Timer() {
+  function Timer(dashboard) {
     _classCallCheck(this, Timer);
 
+    this.totalElapsedTime = 0;
     this.milliseconds = 0;
     this.seconds = 0;
     this.minutes = 0;
@@ -643,11 +653,13 @@ var Timer = function () {
     this.setCurrentTime();
     this.interval = null;
     this.timerRunning = false;
+    this.currentRecording = null;
+    this.dashboard = dashboard;
     this.addListeners();
   }
 
   _createClass(Timer, [{
-    key: "setCurrentTime",
+    key: 'setCurrentTime',
     value: function setCurrentTime() {
       this.parseTime();
 
@@ -657,10 +669,10 @@ var Timer = function () {
           paddedMillisecond = paddedTime.paddedMillisecond;
 
 
-      $("#timer").text(paddedMinute + ":" + paddedSecond + ":" + paddedMillisecond);
+      $("#timer").text(paddedMinute + ':' + paddedSecond + ':' + paddedMillisecond);
     }
   }, {
-    key: "padTime",
+    key: 'padTime',
     value: function padTime(milliseconds, seconds, minutes) {
       var paddedMillisecond = milliseconds >= 10 ? milliseconds.toString().slice(0, 2) : "0" + milliseconds;
       var paddedSecond = seconds >= 10 ? seconds : "0" + seconds;
@@ -669,7 +681,7 @@ var Timer = function () {
       return { paddedMillisecond: paddedMillisecond, paddedSecond: paddedSecond, paddedMinute: paddedMinute };
     }
   }, {
-    key: "parseTime",
+    key: 'parseTime',
     value: function parseTime() {
       while (this.milliseconds >= 1000) {
         this.milliseconds -= 1000;
@@ -682,69 +694,66 @@ var Timer = function () {
       }
     }
   }, {
-    key: "resetTimer",
+    key: 'resetTimer',
     value: function resetTimer() {
+      this.endCurrentRecording();
       this.clearTimer();
       this.stopInterval();
       this.setCurrentTime();
       this.timerRunning = false;
+      this.paused = true;
       this.cursor.reset();
     }
   }, {
-    key: "clearTimer",
+    key: 'clearTimer',
     value: function clearTimer() {
       this.milliseconds = 0;
       this.seconds = 0;
       this.minutes = 0;
+      this.totalElapsedTime = 0;
     }
   }, {
-    key: "stopInterval",
+    key: 'stopInterval',
     value: function stopInterval() {
       window.clearInterval(this.interval);
     }
   }, {
-    key: "pauseTimer",
+    key: 'pauseTimer',
     value: function pauseTimer() {
       this.paused = true;
+      this.endCurrentRecording();
       this.stopInterval();
       this.timerRunning = false;
     }
   }, {
-    key: "seek",
+    key: 'seek',
     value: function seek(time) {
       this.milliseconds = time;
+      this.totalElapsedTime = time;
     }
   }, {
-    key: "runTimer",
+    key: 'runTimer',
     value: function runTimer() {
       var _this = this;
 
       this.interval = setInterval(function () {
         if (!_this.paused) {
           _this.milliseconds += 100;
+          _this.totalElapsedTime += 0.1;
+          _this.totalElapsedTime = Math.round(_this.totalElapsedTime * 100) / 100;
+
           _this.cursor.run();
           _this.setCurrentTime();
         }
       }, 100);
     }
   }, {
-    key: "addListeners",
+    key: 'addListeners',
     value: function addListeners() {
       var _this2 = this;
 
-      $("#record-button").on("click", function () {
-        if (_this2.paused) _this2.paused = false;
-        if (!_this2.timerRunning) _this2.runTimer();
-
-        _this2.timerRunning = true;
-      });
-
-      $("#play-button").on("click", function () {
-        if (_this2.paused) _this2.paused = false;
-        if (!_this2.timerRunning) _this2.runTimer();
-
-        _this2.timerRunning = true;
-      });
+      this.toggleRecording();
+      this.togglePlay();
 
       $("#pause-button").on("click", function () {
         return _this2.pauseTimer();
@@ -752,6 +761,46 @@ var Timer = function () {
       $("#stop-button").on("click", function () {
         return _this2.resetTimer();
       });
+    }
+  }, {
+    key: 'toggleRecording',
+    value: function toggleRecording() {
+      var _this3 = this;
+
+      $("#record-button").on("click", function () {
+        _this3.createNewRecording();
+
+        if (_this3.paused) _this3.paused = false;
+        if (!_this3.timerRunning) _this3.runTimer();
+
+        _this3.timerRunning = true;
+      });
+    }
+  }, {
+    key: 'togglePlay',
+    value: function togglePlay() {
+      var _this4 = this;
+
+      $("#play-button").on("click", function () {
+        _this4.endCurrentRecording();
+
+        if (_this4.paused) _this4.paused = false;
+        if (!_this4.timerRunning) _this4.runTimer();
+
+        _this4.timerRunning = true;
+      });
+    }
+  }, {
+    key: 'createNewRecording',
+    value: function createNewRecording() {
+      this.currentRecording = new _recording2.default(this.dashboard, this.totalElapsedTime);
+      this.dashboard.recordingSuite.push(this.currentRecording);
+    }
+  }, {
+    key: 'endCurrentRecording',
+    value: function endCurrentRecording() {
+      this.currentRecording.endTime = this.totalElapsedTime;
+      this.currentRecording = null;
     }
   }]);
 
@@ -906,7 +955,9 @@ var Ticker = function () {
         var offset = e.offsetX;
 
         clearTimer();
-        _this.timer.seconds = Math.floor(offset / 10);
+        var seconds = Math.floor(offset / 10);
+        _this.timer.seconds = seconds;
+        _this.timer.totalElapsedTime = offset / 10;
         setCurrentTime();
         cursor.seek(offset);
       });
@@ -970,6 +1021,65 @@ var Cursor = function () {
 }();
 
 exports.default = Cursor;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RecordingSuite = function () {
+  function RecordingSuite() {
+    _classCallCheck(this, RecordingSuite);
+
+    this.recordings = [];
+  }
+
+  _createClass(RecordingSuite, [{
+    key: "push",
+    value: function push(el) {
+      this.recordings.push(el);
+    }
+  }]);
+
+  return RecordingSuite;
+}();
+
+exports.default = RecordingSuite;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Recording = function Recording(dashboard, startTime) {
+  _classCallCheck(this, Recording);
+
+  this.keyboard = dashboard.keyboard;
+  this.selectedInstrument = dashboard.selectedInstrument;
+  this.timer = dashboard.timer;
+  this.startTime = startTime;
+  this.endTime = null;
+};
+
+exports.default = Recording;
 
 /***/ })
 /******/ ]);
