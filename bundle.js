@@ -671,10 +671,12 @@ var Timer = function () {
   }, {
     key: "parseTime",
     value: function parseTime() {
-      if (this.milliseconds >= 1000) {
+      while (this.milliseconds >= 1000) {
         this.milliseconds -= 1000;
         this.seconds++;
-      } else if (this.seconds >= 60) {
+      }
+
+      while (this.seconds >= 60) {
         this.seconds -= 60;
         this.minutes++;
       }
@@ -682,13 +684,18 @@ var Timer = function () {
   }, {
     key: "resetTimer",
     value: function resetTimer() {
-      this.milliseconds = 0;
-      this.seconds = 0;
-      this.minutes = 0;
+      this.clearTimer();
       this.stopInterval();
       this.setCurrentTime();
       this.timerRunning = false;
       this.cursor.reset();
+    }
+  }, {
+    key: "clearTimer",
+    value: function clearTimer() {
+      this.milliseconds = 0;
+      this.seconds = 0;
+      this.minutes = 0;
     }
   }, {
     key: "stopInterval",
@@ -836,6 +843,7 @@ var Ticker = function () {
     this.populateDashboardTicker();
     this.timer = timer;
     this.addTicks();
+    this.addEventListener();
   }
 
   _createClass(Ticker, [{
@@ -880,6 +888,28 @@ var Ticker = function () {
         minutes++;
       }
       return [seconds, minutes];
+    }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener() {
+      var _this = this;
+
+      var canvas = $("#timer-ticker");
+      var _timer = this.timer,
+          setCurrentTime = _timer.setCurrentTime,
+          cursor = _timer.cursor,
+          clearTimer = _timer.clearTimer;
+
+      setCurrentTime = setCurrentTime.bind(this.timer);
+      clearTimer = clearTimer.bind(this.timer);
+      canvas.on("click", function (e) {
+        var offset = e.offsetX;
+
+        clearTimer();
+        _this.timer.seconds = Math.floor(offset / 10);
+        setCurrentTime();
+        cursor.seek(offset);
+      });
     }
   }]);
 

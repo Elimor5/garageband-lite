@@ -31,23 +31,29 @@ class Timer {
   }
 
   parseTime() {
-    if (this.milliseconds >= 1000) {
+    while (this.milliseconds >= 1000) {
       this.milliseconds -= 1000;
       this.seconds++;
-    } else if (this.seconds >= 60) {
+    }
+
+    while (this.seconds >= 60) {
       this.seconds -= 60;
       this.minutes++;
     }
   }
 
   resetTimer() {
-    this.milliseconds = 0;
-    this.seconds = 0;
-    this.minutes = 0;
+    this.clearTimer();
     this.stopInterval();
     this.setCurrentTime();
     this.timerRunning = false;
     this.cursor.reset();
+  }
+
+  clearTimer() {
+    this.milliseconds = 0;
+    this.seconds = 0;
+    this.minutes = 0;
   }
 
   stopInterval() {

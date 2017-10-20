@@ -264,6 +264,10 @@
   width: 1457px;*/
 }
 
+#timer-ticker:hover {
+  cursor: pointer;
+}
+
 .sound-bytes-inner {
   height: 100%;
 }

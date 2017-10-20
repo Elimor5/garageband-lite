@@ -3,6 +3,7 @@ class Ticker {
     this.populateDashboardTicker();
     this.timer = timer;
     this.addTicks();
+    this.addEventListener();
   }
 
   populateDashboardTicker() {
@@ -41,6 +42,21 @@ class Ticker {
      minutes ++;
     }
     return [seconds, minutes];
+  }
+
+  addEventListener() {
+    const canvas = $("#timer-ticker");
+    let { setCurrentTime, cursor, clearTimer } = this.timer;
+    setCurrentTime = setCurrentTime.bind(this.timer);
+    clearTimer = clearTimer.bind(this.timer);
+    canvas.on("click",(e) => {
+      let offset = e.offsetX;
+
+      clearTimer();
+      this.timer.seconds = Math.floor(offset / 10);
+      setCurrentTime();
+      cursor.seek(offset);
+    });
   }
 
 
