@@ -36,7 +36,7 @@ class Ticker {
   }
 
   parseTime(seconds, minutes) {
-    if (seconds >= 60) {
+    while (seconds >= 60) {
      seconds -= 60;
      minutes ++;
     }
