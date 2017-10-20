@@ -1,6 +1,7 @@
 import Timer from './timer';
 import Instrument from './instrument';
 import InstrumentsModal from './instruments_modal';
+import Ticker from './ticker';
 
 class Dashboard {
   constructor(keyboard) {
@@ -10,6 +11,7 @@ class Dashboard {
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
     this.selectedInstrument = [];
+    this.ticker = new Ticker(this.timer);
   }
 
   addInstrument(instrumentType) {

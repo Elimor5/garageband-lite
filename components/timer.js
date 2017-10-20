@@ -1,4 +1,3 @@
-import Ticker from './ticker';
 
 class Timer {
   constructor (){
@@ -10,27 +9,33 @@ class Timer {
     this.interval = null;
     this.timerRunning = false;
     this.addListeners();
-    this.ticker = new Ticker();
   }
 
   setCurrentTime() {
+    this.parseTime();
+
+    let paddedTime = this.padTime(this.milliseconds, this.seconds, this.minutes);
+    const { paddedMinute, paddedSecond, paddedMillisecond } = paddedTime;
+
+    $("#timer").text(`${paddedMinute}:${paddedSecond}:${paddedMillisecond}`);
+  }
+
+  padTime(milliseconds, seconds, minutes) {
+    let paddedMillisecond = milliseconds >= 10 ? milliseconds.toString().slice(0,2) : "0" + milliseconds;
+    let paddedSecond = seconds >= 10 ? seconds : "0" + seconds;
+    let paddedMinute = minutes >= 10 ? minutes : "0" + minutes;
+
+    return { paddedMillisecond, paddedSecond, paddedMinute };
+  }
+
+  parseTime() {
     if (this.milliseconds >= 1000) {
       this.milliseconds -= 1000;
       this.seconds++;
     } else if (this.seconds >= 60) {
       this.seconds -= 60;
-      this.minutes ++;
+      this.minutes++;
     }
-
-    let paddedMillisecond = this.milliseconds > 10 ? this.milliseconds.toString().slice(0,2) : "0" + this.milliseconds;
-    let paddedSecond = this.seconds > 10 ? this.seconds : "0" + this.seconds;
-    let paddedMinute = this.minutes > 10 ? this.minutes : "0" + this.minutes;
-
-    $("#timer").text(`${paddedMinute}:${paddedSecond}:${paddedMillisecond}`);
-  }
-
-  padTime() {
-
   }
 
   resetTimer() {

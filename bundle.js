@@ -91,6 +91,10 @@ var _instruments_modal = __webpack_require__(4);
 
 var _instruments_modal2 = _interopRequireDefault(_instruments_modal);
 
+var _ticker = __webpack_require__(9);
+
+var _ticker2 = _interopRequireDefault(_ticker);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -105,6 +109,7 @@ var Dashboard = function () {
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
     this.selectedInstrument = [];
+    this.ticker = new _ticker2.default(this.timer);
   }
 
   _createClass(Dashboard, [{
@@ -617,12 +622,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ticker = __webpack_require__(9);
-
-var _ticker2 = _interopRequireDefault(_ticker);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Timer = function () {
@@ -637,12 +636,33 @@ var Timer = function () {
     this.interval = null;
     this.timerRunning = false;
     this.addListeners();
-    this.ticker = new _ticker2.default();
   }
 
   _createClass(Timer, [{
     key: "setCurrentTime",
     value: function setCurrentTime() {
+      this.parseTime();
+
+      var paddedTime = this.padTime(this.milliseconds, this.seconds, this.minutes);
+      var paddedMinute = paddedTime.paddedMinute,
+          paddedSecond = paddedTime.paddedSecond,
+          paddedMillisecond = paddedTime.paddedMillisecond;
+
+
+      $("#timer").text(paddedMinute + ":" + paddedSecond + ":" + paddedMillisecond);
+    }
+  }, {
+    key: "padTime",
+    value: function padTime(milliseconds, seconds, minutes) {
+      var paddedMillisecond = milliseconds >= 10 ? milliseconds.toString().slice(0, 2) : "0" + milliseconds;
+      var paddedSecond = seconds >= 10 ? seconds : "0" + seconds;
+      var paddedMinute = minutes >= 10 ? minutes : "0" + minutes;
+
+      return { paddedMillisecond: paddedMillisecond, paddedSecond: paddedSecond, paddedMinute: paddedMinute };
+    }
+  }, {
+    key: "parseTime",
+    value: function parseTime() {
       if (this.milliseconds >= 1000) {
         this.milliseconds -= 1000;
         this.seconds++;
@@ -650,16 +670,7 @@ var Timer = function () {
         this.seconds -= 60;
         this.minutes++;
       }
-
-      var paddedMillisecond = this.milliseconds > 10 ? this.milliseconds.toString().slice(0, 2) : "0" + this.milliseconds;
-      var paddedSecond = this.seconds > 10 ? this.seconds : "0" + this.seconds;
-      var paddedMinute = this.minutes > 10 ? this.minutes : "0" + this.minutes;
-
-      $("#timer").text(paddedMinute + ":" + paddedSecond + ":" + paddedMillisecond);
     }
-  }, {
-    key: "padTime",
-    value: function padTime() {}
   }, {
     key: "resetTimer",
     value: function resetTimer() {
@@ -812,19 +823,14 @@ var Ticker = function () {
   function Ticker(timer) {
     _classCallCheck(this, Ticker);
 
-    this.timer = timer;
     this.populateDashboardTicker();
+    this.timer = timer;
     this.addTicks();
   }
 
   _createClass(Ticker, [{
     key: "populateDashboardTicker",
     value: function populateDashboardTicker() {
-      $('.sound-bytes').append($("<canvas/>", {
-        class: "timer-ticker-background",
-        id: "timer-ticker"
-      }));
-
       $('.instruments-container').append($("<div/>", {
         class: "timer-ticker-background"
       }));
@@ -832,7 +838,35 @@ var Ticker = function () {
   }, {
     key: "addTicks",
     value: function addTicks() {
-      var timer = $("#timer-ticker");
+      var c = document.getElementById("timer-ticker");
+      var ctx = c.getContext("2d");
+      ctx.beginPath();
+
+      for (var i = 0; i < 1400; i += 10) {
+        if (i % 50 === 0) {
+          var minutes = 0;
+          var seconds = i / 10;
+
+          if (seconds >= 60) {
+            seconds -= 60;
+            minutes++;
+          }
+          var paddedTime = this.timer.padTime(null, seconds, minutes);
+          var paddedSecond = paddedTime.paddedSecond,
+              paddedMinute = paddedTime.paddedMinute;
+
+          // ctx.moveTo(i, c.height - 10);
+          // debugger
+
+          ctx.font = "10px Arial";
+          ctx.strokeText(paddedMinute + ":" + paddedSecond, i - 12, c.height - 10);
+        }
+
+        ctx.moveTo(i, c.height);
+        ctx.lineTo(i, c.height - 5);
+        ctx.strokeStyle = '#f1f1f1';
+        ctx.stroke();
+      }
     }
   }]);
 

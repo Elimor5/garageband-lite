@@ -254,5 +254,11 @@
 .timer-ticker-background {
   height: 5%;
   width: 100%;
-  background-color: orange;
+  background-color: gray;
+}
+
+#timer-ticker {
+  background-color: gray;
+  /*height: 16px;
+  width: 1457px;*/
 }
