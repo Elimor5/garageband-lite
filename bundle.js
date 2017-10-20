@@ -369,10 +369,11 @@ var Instrument = function () {
       }));
 
       this.instrumentLabel.append($('<div/>', {
-        class: "instrument-label-title-container"
+        class: "instrument-label-title-container",
+        id: "instrument-label-title-container-" + this.id
       }));
 
-      $('.instrument-label-title-container').append($('<div/>', {
+      $("#instrument-label-title-container-" + this.id).append($('<div/>', {
         class: "instrument-label-title",
         text: this.instrumentType[0].toUpperCase() + this.instrumentType.slice(1)
       }));
@@ -380,7 +381,7 @@ var Instrument = function () {
   }, {
     key: "populateSoundByteContainer",
     value: function populateSoundByteContainer() {
-      $('.sound-bytes').append(this.soundByteContainer);
+      $('.sound-bytes-inner').append(this.soundByteContainer);
     }
   }, {
     key: "addInstrument",
@@ -622,6 +623,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _cursor = __webpack_require__(10);
+
+var _cursor2 = _interopRequireDefault(_cursor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Timer = function () {
@@ -632,6 +639,7 @@ var Timer = function () {
     this.seconds = 0;
     this.minutes = 0;
     this.paused = false;
+    this.cursor = new _cursor2.default();
     this.setCurrentTime();
     this.interval = null;
     this.timerRunning = false;
@@ -680,6 +688,7 @@ var Timer = function () {
       this.stopInterval();
       this.setCurrentTime();
       this.timerRunning = false;
+      this.cursor.reset();
     }
   }, {
     key: "stopInterval",
@@ -706,6 +715,7 @@ var Timer = function () {
       this.interval = setInterval(function () {
         if (!_this.paused) {
           _this.milliseconds += 100;
+          _this.cursor.run();
           _this.setCurrentTime();
         }
       }, 100);
@@ -843,7 +853,7 @@ var Ticker = function () {
       ctx.beginPath();
 
       for (var i = 0; i < 1400; i += 10) {
-        if (i % 50 === 0) {
+        if (i % 50 === 0 && i != 0) {
           var minutes = 0;
           var seconds = i / 10;
           var parsedTime = this.parseTime(seconds, minutes);
@@ -877,6 +887,59 @@ var Ticker = function () {
 }();
 
 exports.default = Ticker;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cursor = function () {
+  function Cursor() {
+    _classCallCheck(this, Cursor);
+
+    this.cursor = $('#cursor');
+  }
+
+  _createClass(Cursor, [{
+    key: "currentPos",
+    value: function currentPos() {
+      var pos = this.cursor.css("left");
+      return parseInt(pos.slice(0, pos.length - 2));
+    }
+  }, {
+    key: "run",
+    value: function run() {
+      var currentPos = this.currentPos();
+      var nextPos = currentPos + 1;
+
+      var pos = this.cursor.css({ left: nextPos });
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.cursor.css({ left: "0px" });
+    }
+  }, {
+    key: "seek",
+    value: function seek(pos) {
+      this.cursor.css({ left: pos });
+    }
+  }]);
+
+  return Cursor;
+}();
+
+exports.default = Cursor;
 
 /***/ })
 /******/ ]);

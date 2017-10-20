@@ -32,15 +32,16 @@ class Instrument {
       class: "instrument-label-image-container"
     }));
 
-    $('.instrument-label-image-container').append($('<div/>',{
+    $('.instrument-label-image-container').append($('<div/>', {
       class: `${this.instrumentType}-image`
     }));
 
     this.instrumentLabel.append($('<div/>',{
       class: "instrument-label-title-container",
+      id: `instrument-label-title-container-${this.id}`
     }));
 
-    $('.instrument-label-title-container').append($('<div/>',{
+    $(`#instrument-label-title-container-${this.id}`).append($('<div/>', {
       class: "instrument-label-title",
       text: this.instrumentType[0].toUpperCase() + this.instrumentType.slice(1)
     }));
@@ -48,7 +49,7 @@ class Instrument {
   }
 
   populateSoundByteContainer() {
-    $('.sound-bytes').append(this.soundByteContainer);
+    $('.sound-bytes-inner').append(this.soundByteContainer);
   }
 
   addInstrument() {

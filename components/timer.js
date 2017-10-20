@@ -1,3 +1,4 @@
+import Cursor from './cursor';
 
 class Timer {
   constructor (){
@@ -5,6 +6,7 @@ class Timer {
     this.seconds = 0;
     this.minutes = 0;
     this.paused = false;
+    this.cursor = new Cursor();
     this.setCurrentTime();
     this.interval = null;
     this.timerRunning = false;
@@ -45,6 +47,7 @@ class Timer {
     this.stopInterval();
     this.setCurrentTime();
     this.timerRunning = false;
+    this.cursor.reset();
   }
 
   stopInterval() {
@@ -65,6 +68,7 @@ class Timer {
     this.interval = setInterval(()=> {
       if (!this.paused) {
         this.milliseconds += 100;
+        this.cursor.run();
         this.setCurrentTime();
       }
     }, 100);

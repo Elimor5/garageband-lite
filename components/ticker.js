@@ -17,7 +17,7 @@ class Ticker {
     ctx.beginPath();
 
     for (let i = 0; i < 1400; i+=10) {
-      if (i % 50 === 0) {
+      if (i % 50 === 0 && i != 0) {
         let minutes = 0;
         let seconds = i / 10;
         let parsedTime = this.parseTime(seconds, minutes);
