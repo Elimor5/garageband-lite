@@ -55,6 +55,12 @@ class Instrument {
   addInstrument() {
     $(".instrument-selector");
   }
+
+  addEventListener(updateSelectedInstrument) {
+    this.instrumentLabel.on("click", () => {
+      updateSelectedInstrument(this);
+    });
+  }
 }
 
 export default Instrument;

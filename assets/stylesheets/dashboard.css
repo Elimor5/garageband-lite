@@ -223,6 +223,11 @@
   width: 100%;
   border: solid 1px white;
   display: flex;
+  margin-bottom: 1px;
+}
+
+.instrument-label:hover {
+  cursor: pointer;
 }
 
 .instruments-container {
@@ -233,6 +238,7 @@
   height: 64px;
   width: 100%;
   border: solid 1px white;
+  margin-bottom: 1px;
 }
 
 .instrument-label-title {

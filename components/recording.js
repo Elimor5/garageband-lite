@@ -6,4 +6,5 @@ export default class Recording {
     this.startTime = startTime;
     this.endTime = null;
   }
+
 }

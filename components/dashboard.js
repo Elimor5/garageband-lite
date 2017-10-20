@@ -11,7 +11,7 @@ class Dashboard {
     this.modal = new InstrumentsModal();
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
-    this.selectedInstrument = [];
+    this.selectedInstrument = null;
     this.ticker = new Ticker(this.timer);
     this.recordingSuite = new RecordingSuite();
   }
@@ -19,13 +19,28 @@ class Dashboard {
   addInstrument(instrumentType) {
     const id = this.instruments.length;
     const newInstrument = new Instrument(id, instrumentType);
+    newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
+
     this.instruments.push(newInstrument);
     this.updateKeyboard(instrumentType);
     this.updateSelectedInstrument(newInstrument);
   }
 
   updateSelectedInstrument(instrument) {
+    let whiteBorder = '1px solid white';
+    let blueBorder = "1px solid #ADD8E6";
+
+    if (this.selectedInstrument) {
+      let { instrumentLabel, soundByteContainer } = this.selectedInstrument;
+
+      instrumentLabel.css({backgroundColor: '', border: whiteBorder, zIndex: 0});
+      soundByteContainer.css({ border: whiteBorder, zIndex: 0});
+    }
+
     this.selectedInstrument = instrument;
+
+    this.selectedInstrument.instrumentLabel.css({backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
+    this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
   }
 
   updateKeyboard(instrumentType) {

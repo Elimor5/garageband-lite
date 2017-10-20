@@ -113,6 +113,7 @@ class Timer {
 
   togglePlay() {
     $("#play-button").on("click",() =>{
+      // if (dashboard)
       this.endCurrentRecording();
 
       if (this.paused) this.paused = false;
