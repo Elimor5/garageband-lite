@@ -103,12 +103,16 @@ class Timer {
 
   toggleRecording() {
     $("#record-button").on("click",() =>{
-      this.createNewRecording();
+      if (this.dashboard.selectedInstrument) {
+        this.createNewRecording();
 
-      if (this.paused) this.paused = false;
-      if (!this.timerRunning) this.runTimer();
+        if (this.paused) this.paused = false;
+        if (!this.timerRunning) this.runTimer();
 
-      this.timerRunning = true;
+        this.timerRunning = true;
+      } else {
+        alert("You must add an instrument to the dashboard before recording!")
+      }
     });
   }
 
@@ -130,13 +134,8 @@ class Timer {
   }
 
   endCurrentRecording() {
-    this.currentRecording.endTime = this.totalElapsedTime;
-    this.currentRecording = null;
+    this.currentRecording.endCurrentRecording();
   }
-
-
-
-
 }
 
 export default Timer;

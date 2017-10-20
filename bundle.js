@@ -796,12 +796,16 @@ var Timer = function () {
       var _this3 = this;
 
       $("#record-button").on("click", function () {
-        _this3.createNewRecording();
+        if (_this3.dashboard.selectedInstrument) {
+          _this3.createNewRecording();
 
-        if (_this3.paused) _this3.paused = false;
-        if (!_this3.timerRunning) _this3.runTimer();
+          if (_this3.paused) _this3.paused = false;
+          if (!_this3.timerRunning) _this3.runTimer();
 
-        _this3.timerRunning = true;
+          _this3.timerRunning = true;
+        } else {
+          alert("You must add an instrument to the dashboard before recording!");
+        }
       });
     }
   }, {
@@ -828,8 +832,7 @@ var Timer = function () {
   }, {
     key: 'endCurrentRecording',
     value: function endCurrentRecording() {
-      this.currentRecording.endTime = this.totalElapsedTime;
-      this.currentRecording = null;
+      this.currentRecording.endCurrentRecording();
     }
   }]);
 
@@ -1108,6 +1111,7 @@ var Recording = function () {
     this.selectedInstrument = dashboard.selectedInstrument;
     this.timer = dashboard.timer;
     this.startTime = startTime;
+    this.id = this.retrieveCanvasId();
     this.endTime = null;
     this.canvas = null;
     this.startRecording();
@@ -1132,16 +1136,35 @@ var Recording = function () {
       this.canvas[0].width++;
     }
   }, {
-    key: "createCanvasElement",
-    value: function createCanvasElement() {
+    key: "retrieveCanvasId",
+    value: function retrieveCanvasId() {
       var _selectedInstrument = this.selectedInstrument,
           id = _selectedInstrument.id,
           instrumentType = _selectedInstrument.instrumentType;
 
-
-      this.canvas = $("<canvas height=\"64px\" width=\"1px\" class=\"sound-byte-visual\" id=" + instrumentType + "-" + id + "-" + this.startTime + "></canvas>");
-
+      return instrumentType + "-" + id + "-" + this.startTime;
+    }
+  }, {
+    key: "createCanvasElement",
+    value: function createCanvasElement() {
+      var startPosition = this.updateStartPosition(this.startTime);
+      this.canvas = $("<canvas height=\"64px\" width=\"1px\" class=\"sound-byte-visual\" id=" + this.id + "></canvas>");
+      this.canvas.css({ backgroundColor: "#FF7F7F", left: "" + startPosition });
+      debugger;
       return this.canvas;
+    }
+  }, {
+    key: "updateStartPosition",
+    value: function updateStartPosition(pos) {
+      var pixels = pos * 10;
+      return pixels + "px";
+    }
+  }, {
+    key: "endCurrentRecording",
+    value: function endCurrentRecording() {
+      this.canvas.css({ backgroundColor: "#84DAA1" });
+      this.endTime = this.timer.totalElapsedTime;
+      timer.currentRecording = null;
     }
   }]);
 

@@ -290,5 +290,5 @@
 .sound-byte-visual {
   height: 100%;
   position: absolute;
-  background-color: #FF7F7F
+  border-radius: 21px
 }
