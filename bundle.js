@@ -771,6 +771,7 @@ var Timer = function () {
 
           _this.cursor.run();
           _this.setCurrentTime();
+          if (_this.currentRecording) _this.currentRecording.expandCurrentRecording();
         }
       }, 100);
     }
@@ -1095,17 +1096,57 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Recording = function Recording(dashboard, startTime) {
-  _classCallCheck(this, Recording);
+var Recording = function () {
+  function Recording(dashboard, startTime) {
+    _classCallCheck(this, Recording);
 
-  this.keyboard = dashboard.keyboard;
-  this.selectedInstrument = dashboard.selectedInstrument;
-  this.timer = dashboard.timer;
-  this.startTime = startTime;
-  this.endTime = null;
-};
+    this.keyboard = dashboard.keyboard;
+    this.selectedInstrument = dashboard.selectedInstrument;
+    this.timer = dashboard.timer;
+    this.startTime = startTime;
+    this.endTime = null;
+    this.canvas = null;
+    this.startRecording();
+  }
+
+  _createClass(Recording, [{
+    key: "startRecording",
+    value: function startRecording() {
+      this.createSoundByteVisual();
+    }
+  }, {
+    key: "createSoundByteVisual",
+    value: function createSoundByteVisual() {
+      var soundByteContainer = this.selectedInstrument.soundByteContainer;
+      var recording = this.createCanvasElement();
+
+      soundByteContainer.append(recording);
+    }
+  }, {
+    key: "expandCurrentRecording",
+    value: function expandCurrentRecording() {
+      this.canvas[0].width++;
+    }
+  }, {
+    key: "createCanvasElement",
+    value: function createCanvasElement() {
+      var _selectedInstrument = this.selectedInstrument,
+          id = _selectedInstrument.id,
+          instrumentType = _selectedInstrument.instrumentType;
+
+
+      this.canvas = $("<canvas height=\"64px\" width=\"1px\" class=\"sound-byte-visual\" id=" + instrumentType + "-" + id + "-" + this.startTime + "></canvas>");
+
+      return this.canvas;
+    }
+  }]);
+
+  return Recording;
+}();
 
 exports.default = Recording;
 

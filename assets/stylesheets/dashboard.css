@@ -239,6 +239,7 @@
   width: 100%;
   border: solid 1px white;
   margin-bottom: 1px;
+  position: relative;
 }
 
 .instrument-label-title {
@@ -283,4 +284,11 @@
   height: 100%;
   width: 2px;
   background-color: green;
+  z-index: 100;
+}
+
+.sound-byte-visual {
+  height: 100%;
+  position: absolute;
+  background-color: #FF7F7F
 }

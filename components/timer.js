@@ -88,6 +88,7 @@ class Timer {
 
         this.cursor.run();
         this.setCurrentTime();
+        if (this.currentRecording) this.currentRecording.expandCurrentRecording();
       }
     }, 100);
   }
@@ -132,6 +133,8 @@ class Timer {
     this.currentRecording.endTime = this.totalElapsedTime;
     this.currentRecording = null;
   }
+
+
 
 
 }
