@@ -3,16 +3,11 @@ export default class Cursor {
     this.cursor = $('#cursor');
   }
 
-  currentPos() {
-    const pos = this.cursor.css("left");
-    return parseInt(pos.slice(0,pos.length - 2));
-  }
+  run(timer) {
 
-  run() {
-    let currentPos = this.currentPos();
-    let nextPos = currentPos + 1;
+    let currentTime = timer.totalElapsedTime * 10;
 
-    const pos = this.cursor.css({ left: nextPos});
+    const pos = this.cursor.css({ left: currentTime});
   }
 
   reset() {

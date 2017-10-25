@@ -30,12 +30,7 @@ class Dashboard {
     let whiteBorder = '1px solid white';
     let blueBorder = "1px solid #ADD8E6";
 
-    if (this.selectedInstrument) {
-      let { instrumentLabel, soundByteContainer } = this.selectedInstrument;
-
-      instrumentLabel.css({backgroundColor: '', border: whiteBorder, zIndex: 0});
-      soundByteContainer.css({ border: whiteBorder, zIndex: 0});
-    }
+    this.clearSelectedBorders(whiteBorder);
 
     this.selectedInstrument = instrument;
 
@@ -43,10 +38,20 @@ class Dashboard {
     this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
   }
 
+  clearSelectedBorders(whiteBorder) {
+    if (this.selectedInstrument) {
+      let { instrumentLabel, soundByteContainer } = this.selectedInstrument;
+
+      instrumentLabel.css({backgroundColor: '', border: whiteBorder, zIndex: 0});
+      soundByteContainer.css({ border: whiteBorder, zIndex: 0});
+    }
+  }
+
   updateKeyboard(instrumentType) {
     this.keyboard.instrument = instrumentType;
     this.keyboard.updateKeys();
   }
+
 
 }
 

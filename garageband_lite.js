@@ -8,6 +8,7 @@ class GaragebandLite {
     this.keyboard.populateKeys();
     this.song = new LinkedList();
     this.dashboard = new Dashboard(this.keyboard);
+    this.keyboard.dashboard = this.dashboard;
   }
 }
 

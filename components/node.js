@@ -1,10 +1,7 @@
 class Node {
-  constructor(note, startTime, endTime) {
+  constructor() {
     this.prevNode = null;
     this.nextNode = null;
-    this.note = note;
-    this.startTime = startTime;
-    this.endTime = endTime;
   }
 
   setStartTime(time) {

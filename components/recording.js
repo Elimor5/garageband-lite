@@ -1,5 +1,8 @@
-export default class Recording {
+import LinkedList from './linked_list';
+
+export default class Recording extends LinkedList {
   constructor(dashboard, startTime) {
+    super();
     this.keyboard = dashboard.keyboard;
     this.selectedInstrument = dashboard.selectedInstrument;
     this.timer = dashboard.timer;
@@ -7,6 +10,7 @@ export default class Recording {
     this.id = this.retrieveCanvasId();
     this.endTime = null;
     this.canvas = null;
+    this.ctx = null;
     this.startRecording();
   }
 
@@ -34,7 +38,8 @@ export default class Recording {
     const startPosition = this.updateStartPosition(this.startTime);
     this.canvas = $(`<canvas height="64px" width="1px" class="sound-byte-visual" id=${this.id}></canvas>`);
     this.canvas.css({ backgroundColor: "#FF7F7F", left: `${startPosition}` });
-    debugger
+    this.ctx = this.canvas[0].getContext('2d');
+    this.ctx.beginPath();
     return this.canvas;
   }
 
@@ -46,6 +51,6 @@ export default class Recording {
   endCurrentRecording() {
     this.canvas.css({backgroundColor: "#84DAA1"});
     this.endTime = this.timer.totalElapsedTime;
-    timer.currentRecording = null;
+    this.timer.currentRecording = null;
   }
 }

@@ -82,15 +82,24 @@ class Timer {
   runTimer() {
     this.interval = setInterval(()=> {
       if (!this.paused) {
-        this.milliseconds += 100;
-        this.totalElapsedTime += 0.1;
-        this.totalElapsedTime = Math.round(this.totalElapsedTime * 100) / 100;
-
-        this.cursor.run();
+        this.setTimeVariables();
+        this.cursor.run(this);
         this.setCurrentTime();
+
         if (this.currentRecording) this.currentRecording.expandCurrentRecording();
+        this.expandTicker();
+        // if (this.currentRecording.length === this.dashboard.ticker.length) {
+        //   debugger
+        //   this.dashboard.ticker.addLength(this.dashboard.ticker.length, this.dashboard.ticker.length + 600);
+        // }
       }
     }, 100);
+  }
+
+  setTimeVariables() {
+    this.milliseconds += 100;
+    this.totalElapsedTime += 0.1;
+    this.totalElapsedTime = Math.round(this.totalElapsedTime * 100) / 100;
   }
 
   addListeners() {
@@ -111,7 +120,7 @@ class Timer {
 
         this.timerRunning = true;
       } else {
-        alert("You must add an instrument to the dashboard before recording!")
+        alert("You must add an instrument to the dashboard before recording!");
       }
     });
   }
@@ -119,7 +128,7 @@ class Timer {
   togglePlay() {
     $("#play-button").on("click",() =>{
       // if (dashboard)
-      this.endCurrentRecording();
+      if (this.currentRecording) this.endCurrentRecording();
 
       if (this.paused) this.paused = false;
       if (!this.timerRunning) this.runTimer();
@@ -128,9 +137,33 @@ class Timer {
     });
   }
 
+  expandTicker() {
+    if (this.totalElapsedTime > 140) {
+      const { ticker } = this.dashboard;
+      if (this.totalElapsedTime % 1 === 0) {
+        const pixels = this.totalElapsedTime * 10;
+
+        ticker.addTick(pixels);
+        $(".sound-bytes").scrollLeft(pixels);
+      }
+      ticker.expandTickerContainer();
+    }
+  }
+
+
   createNewRecording() {
     this.currentRecording = new Recording(this.dashboard, this.totalElapsedTime);
     this.dashboard.recordingSuite.push(this.currentRecording);
+    this.mapRecordingToKeys(this.currentRecording);
+  }
+
+  mapRecordingToKeys(recording) {
+    const { keys } = this.dashboard.keyboard;
+    keys.map((key) => {
+      key.currentRecording = recording;
+      // key.addRecordingListener();
+      // gotta rerender every key with recording
+    });
   }
 
   endCurrentRecording() {
