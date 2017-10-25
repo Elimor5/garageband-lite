@@ -976,8 +976,9 @@ var Ticker = function () {
       setCurrentTime = setCurrentTime.bind(this.timer);
       clearTimer = clearTimer.bind(this.timer);
       ticker.on("click", function (e) {
-        var offset = e.offsetX;
-        debugger;
+        e.stopPropagation();
+        var offset = e.screenX - 23;
+
         clearTimer();
         var seconds = Math.floor(offset / 10);
         _this.timer.seconds = seconds;

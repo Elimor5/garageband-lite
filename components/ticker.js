@@ -83,8 +83,9 @@ class Ticker {
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
     ticker.on("click",(e) => {
-      let offset = e.offsetX;
-      debugger
+      e.stopPropagation();
+      let offset = e.screenX - 23;
+
       clearTimer();
       const seconds = Math.floor(offset / 10);
       this.timer.seconds = seconds;
