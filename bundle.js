@@ -1084,8 +1084,9 @@ var Ticker = function () {
 
       ticker.on("click", function (e) {
         e.stopPropagation();
+        var innerDivOffset = e.target.id !== "timer-ticker" ? e.target.offsetLeft : 0;
         debugger;
-        var offset = e.offsetX; //- 23;
+        var offset = e.offsetX + innerDivOffset;
         console.log("offset " + offset);
         console.log("e.screenX " + e.screenX);
         clearTimer();

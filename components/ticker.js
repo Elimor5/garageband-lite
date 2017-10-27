@@ -85,8 +85,9 @@ class Ticker {
 
     ticker.on("click",(e) => {
       e.stopPropagation();
+      let innerDivOffset = e.target.id !== "timer-ticker" ? e.target.offsetLeft : 0;
       debugger
-      let offset = e.offsetX //- 23;
+      let offset = e.offsetX + innerDivOffset;
       console.log("offset " + offset);
       console.log("e.screenX " + e.screenX);
       clearTimer();
