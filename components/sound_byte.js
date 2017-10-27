@@ -37,7 +37,7 @@ export default class SoundByte extends Node {
 
     this.note.css("left", this.startXPos);
     this.note.css("top", this.yPos);
-    this.note.css("width", this.endXPos);
+    this.note.css("width", this.endXPos - this.startXPos);
 
 
     visual.append(this.note);
