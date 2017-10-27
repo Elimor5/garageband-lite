@@ -914,57 +914,68 @@ var SoundByte = function (_Node) {
     _this.yPos = null;
     _this.startXPos = null;
     _this.endXPos = null;
+    _this.note = null;
     _this.addToRecording(_this.recording);
     _this.getStartPositions();
     return _this;
   }
 
   _createClass(SoundByte, [{
-    key: 'addToRecording',
+    key: "addToRecording",
     value: function addToRecording(recording) {
       recording.append(this);
     }
   }, {
-    key: 'getStartPositions',
+    key: "getStartPositions",
     value: function getStartPositions() {
       this.getStartXPos();
       this.getYPos();
     }
   }, {
-    key: 'drawLine',
+    key: "drawLine",
     value: function drawLine() {
-      var ctx = this.recording.ctx;
-
-      debugger;
-      ctx.moveTo(this.startXPos, this.yPos);
-      ctx.lineTo(this.endXPos, this.yPos);
-      ctx.strokeStyle = '#f1f1f1';
-      ctx.stroke();
+      this.createNote();
     }
   }, {
-    key: 'getStartXPos',
+    key: "createNote",
+    value: function createNote() {
+      var visual = this.recording.visual;
+
+
+      this.note = $("<div/>", {
+        class: "note"
+      });
+
+      this.note.css("left", this.startXPos);
+      this.note.css("top", this.yPos);
+      this.note.css("width", this.endXPos);
+
+      visual.append(this.note);
+    }
+  }, {
+    key: "getStartXPos",
     value: function getStartXPos() {
-      var soundByteStartTime = this.startTime;
       var recordingStartTime = this.recording.startTime;
-
-      this.startXPos = (soundByteStartTime - recordingStartTime) * 10;
+      this.startXPos = (this.startTime - recordingStartTime) * 10;
     }
   }, {
-    key: 'getYPos',
+    key: "getYPos",
     value: function getYPos() {
       var keys = this.recording.keyboard.keys;
-      var canvas = this.recording.canvas;
+      var visual = this.recording.visual;
 
       var notes = keys.map(function (key) {
         return key.note;
       });
+
       var pos = notes.indexOf(this.key.note);
       pos = pos === 0 ? pos + 0.1 : pos;
-
-      this.yPos = canvas[0].height / keys.length * pos;
+      this.yPos = visual.height() * (pos / keys.length);
+      // debugger
+      // console.log("test")
     }
   }, {
-    key: 'getEndPos',
+    key: "getEndPos",
     value: function getEndPos() {
       var totalElapsedTime = this.recording.timer.totalElapsedTime;
 
@@ -1094,6 +1105,7 @@ var Ticker = function () {
 
       setCurrentTime = setCurrentTime.bind(this.timer);
       clearTimer = clearTimer.bind(this.timer);
+      updateTimeVariables = updateTimeVariables.bind(this.timer);
 
       ticker.on("click", function (e) {
         e.stopPropagation();
@@ -1297,7 +1309,6 @@ var Timer = function () {
 
 
         if (recordings.length === 0) {
-          debugger;
           _this3.dashboard.addInstrument("piano");
         }
 

@@ -120,7 +120,6 @@ class Timer {
       const { recordings } = dashboard.recordingSuite;
 
       if (recordings.length === 0) {
-        debugger
         this.dashboard.addInstrument("piano");
       }
 

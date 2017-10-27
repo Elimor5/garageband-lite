@@ -10,6 +10,7 @@ export default class SoundByte extends Node {
     this.yPos = null;
     this.startXPos = null;
     this.endXPos = null;
+    this.note = null;
     this.addToRecording(this.recording);
     this.getStartPositions();
   }
@@ -24,30 +25,40 @@ export default class SoundByte extends Node {
   }
 
   drawLine() {
-    const { ctx } = this.recording;
-    debugger
-    ctx.moveTo(this.startXPos,this.yPos);
-    ctx.lineTo(this.endXPos, this.yPos);
-    ctx.strokeStyle = '#f1f1f1';
-    ctx.stroke();
+    this.createNote();
+  }
+
+  createNote() {
+    const { visual } = this.recording;
+
+    this.note = $("<div/>", {
+      class: "note"
+    });
+
+    this.note.css("left", this.startXPos);
+    this.note.css("top", this.yPos);
+    this.note.css("width", this.endXPos);
+
+
+    visual.append(this.note);
   }
 
 
   getStartXPos() {
-    const soundByteStartTime = this.startTime;
     const recordingStartTime = this.recording.startTime;
-
-    this.startXPos = (soundByteStartTime - recordingStartTime) * 10;
+    this.startXPos = (this.startTime - recordingStartTime) * 10;
   }
 
   getYPos() {
     const { keys } = this.recording.keyboard;
-    const { canvas } = this.recording;
+    const { visual } = this.recording;
     const notes = keys.map(key => key.note);
+
     let pos =  notes.indexOf(this.key.note);
     pos = pos === 0 ? pos + 0.1 : pos;
-
-    this.yPos = canvas[0].height / keys.length * pos;
+    this.yPos = visual.height() * (pos / keys.length);
+    // debugger
+    // console.log("test")
   }
 
   getEndPos() {

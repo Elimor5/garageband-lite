@@ -82,6 +82,7 @@ class Ticker {
     let { setCurrentTime, cursor, clearTimer, updateTimeVariables } = this.timer;
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
+    updateTimeVariables = updateTimeVariables.bind(this.timer);
 
     ticker.on("click",(e) => {
       e.stopPropagation();

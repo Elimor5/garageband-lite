@@ -316,3 +316,10 @@
   color: white;
   font-size: 10px;
 }
+
+.note {
+  height: 2px;
+  background-color: black;
+  border-radius: 15px;
+  position: absolute;
+}
