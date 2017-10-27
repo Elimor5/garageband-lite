@@ -295,8 +295,10 @@
 
 .sound-byte-visual {
   height: 100%;
+  width: 0px;
   position: absolute;
-  border-radius: 21px
+  border-radius: 21px;
+  background-color: #FF7F7F;
 }
 
 .tick {

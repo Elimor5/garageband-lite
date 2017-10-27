@@ -88,10 +88,7 @@ class Timer {
 
         if (this.currentRecording) this.currentRecording.expandCurrentRecording();
         this.expandTicker();
-        // if (this.currentRecording.length === this.dashboard.ticker.length) {
-        //   debugger
-        //   this.dashboard.ticker.addLength(this.dashboard.ticker.length, this.dashboard.ticker.length + 600);
-        // }
+
       }
     }, 100);
   }
@@ -100,6 +97,13 @@ class Timer {
     this.milliseconds += 100;
     this.totalElapsedTime += 0.1;
     this.totalElapsedTime = Math.round(this.totalElapsedTime * 100) / 100;
+  }
+
+  updateTimeVariables(offset) {
+    const seconds = Math.floor(offset / 10);
+    this.milliseconds = (offset % 10) * 100;
+    this.seconds = seconds;
+    this.totalElapsedTime = offset / 10;
   }
 
   addListeners() {
@@ -112,17 +116,28 @@ class Timer {
 
   toggleRecording() {
     $("#record-button").on("click",() =>{
-      if (this.dashboard.selectedInstrument) {
+      const { dashboard } = this;
+      const { recordings } = dashboard.recordingSuite;
+
+      if (recordings.length === 0) {
+        debugger
+        this.dashboard.addInstrument("piano");
+      }
+
+      // if (this.dashboard.selectedInstrument) {
         this.createNewRecording();
 
         if (this.paused) this.paused = false;
         if (!this.timerRunning) this.runTimer();
 
         this.timerRunning = true;
-      } else {
-        alert("You must add an instrument to the dashboard before recording!");
       }
-    });
+
+      // else {
+      //   alert("You must add an instrument to the dashboard before recording!");
+      // }
+    // }
+  );
   }
 
   togglePlay() {
@@ -150,20 +165,10 @@ class Timer {
     }
   }
 
-
   createNewRecording() {
     this.currentRecording = new Recording(this.dashboard, this.totalElapsedTime);
     this.dashboard.recordingSuite.push(this.currentRecording);
-    this.mapRecordingToKeys(this.currentRecording);
-  }
-
-  mapRecordingToKeys(recording) {
-    const { keys } = this.dashboard.keyboard;
-    keys.map((key) => {
-      key.currentRecording = recording;
-      // key.addRecordingListener();
-      // gotta rerender every key with recording
-    });
+    this.currentRecording.mapRecordingToKeys();
   }
 
   endCurrentRecording() {

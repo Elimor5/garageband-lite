@@ -7,10 +7,9 @@ export default class Recording extends LinkedList {
     this.selectedInstrument = dashboard.selectedInstrument;
     this.timer = dashboard.timer;
     this.startTime = startTime;
-    this.id = this.retrieveCanvasId();
+    this.id = this.retrieveVisualId();
     this.endTime = null;
-    this.canvas = null;
-    this.ctx = null;
+    this.visual = null;
     this.startRecording();
   }
 
@@ -20,37 +19,48 @@ export default class Recording extends LinkedList {
 
   createSoundByteVisual() {
     const soundByteContainer = this.selectedInstrument.soundByteContainer;
-    const recording = this.createCanvasElement();
+    const recording = this.createVisual();
 
     soundByteContainer.append(recording);
   }
 
   expandCurrentRecording() {
-    this.canvas[0].width++;
+    const newWidth = this.visual.width() + 1;
+    this.visual.css("width", newWidth);
   }
 
-  retrieveCanvasId() {
+  retrieveVisualId() {
     const { id, instrumentType } = this.selectedInstrument;
     return `${instrumentType}-${id}-${this.startTime}`;
   }
 
-  createCanvasElement() {
-    const startPosition = this.updateStartPosition(this.startTime);
-    this.canvas = $(`<canvas height="64px" width="1px" class="sound-byte-visual" id=${this.id}></canvas>`);
-    this.canvas.css({ backgroundColor: "#FF7F7F", left: `${startPosition}` });
-    this.ctx = this.canvas[0].getContext('2d');
-    this.ctx.beginPath();
-    return this.canvas;
+  createVisual() {
+    const startPosition = this.updateStartPosition();
+    this.visual = $("<div/>", {
+      id: this.id,
+      class: "sound-byte-visual"
+    });
+    this.visual.css({ left: `${startPosition}` });
+    return this.visual;
   }
 
-  updateStartPosition(pos) {
-    const pixels = pos * 10;
+  updateStartPosition() {
+    const pixels = this.startTime * 10;
     return `${pixels}px`;
   }
 
   endCurrentRecording() {
-    this.canvas.css({backgroundColor: "#84DAA1"});
+    this.visual.css({backgroundColor: "#84DAA1"});
     this.endTime = this.timer.totalElapsedTime;
     this.timer.currentRecording = null;
+  }
+
+  mapRecordingToKeys() {
+    const { keys } = this.keyboard;
+    keys.map((key) => {
+      key.currentRecording = this;
+      // key.addRecordingListener();
+      // gotta rerender every key with recording
+    });
   }
 }

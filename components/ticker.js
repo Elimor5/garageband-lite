@@ -79,25 +79,24 @@ class Ticker {
 
   addEventListener() {
     const ticker = $("#timer-ticker");
-    let { setCurrentTime, cursor, clearTimer } = this.timer;
+    let { setCurrentTime, cursor, clearTimer, updateTimeVariables } = this.timer;
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
 
     ticker.on("click",(e) => {
       e.stopPropagation();
       let innerDivOffset = e.target.id !== "timer-ticker" ? e.target.offsetLeft : 0;
-      debugger
       let offset = e.offsetX + innerDivOffset;
-      console.log("offset " + offset);
-      console.log("e.screenX " + e.screenX);
+
       clearTimer();
-      const seconds = Math.floor(offset / 10);
-      this.timer.seconds = seconds;
-      this.timer.totalElapsedTime = offset / 10;
+      updateTimeVariables(offset);
       setCurrentTime();
+
       cursor.seek(offset);
     });
   }
+
+
 
   expandTickerContainer() {
     const width = $("#timer-ticker").css("width");
