@@ -111,14 +111,14 @@ var LinkedList = function () {
     }
   }, {
     key: "find",
-    value: function find(note, node) {
+    value: function find(time, node) {
       if (!node) node = this.head;
-      if (note === node.note) {
+      if (time === node.startTime) {
         return node;
       } else if (node === this.tail) {
         return -1;
       } else {
-        return this.find(note, node.nextNode);
+        return this.find(time, node.nextNode);
       }
     }
   }, {
@@ -686,9 +686,6 @@ var Key = function () {
         if (listener === "mouse" || e.key === currentKeyChar) {
           if (_this.currentRecording) {
             _this.currentSoundByte.getEndPos();
-            console.log("ypos:" + _this.currentSoundByte.yPos);
-            console.log("startpos:" + _this.currentSoundByte.startXPos);
-            console.log("endpos:" + _this.currentSoundByte.endXPos);
             _this.currentSoundByte.drawLine();
             _this.currentSoundByte = null;
           }
@@ -1242,7 +1239,7 @@ var Timer = function () {
     key: 'pauseTimer',
     value: function pauseTimer() {
       this.paused = true;
-      this.endCurrentRecording();
+      if (this.currentRecording) this.endCurrentRecording();
       this.stopInterval();
       this.timerRunning = false;
     }
@@ -1290,6 +1287,7 @@ var Timer = function () {
 
       this.toggleRecording();
       this.togglePlay();
+      this.controlRecordingsWithKeyboard();
 
       $("#pause-button").on("click", function () {
         return _this2.pauseTimer();
@@ -1304,21 +1302,7 @@ var Timer = function () {
       var _this3 = this;
 
       $("#record-button").on("click", function () {
-        var dashboard = _this3.dashboard;
-        var recordings = dashboard.recordingSuite.recordings;
-
-
-        if (recordings.length === 0) {
-          _this3.dashboard.addInstrument("piano");
-        }
-
-        // if (this.dashboard.selectedInstrument) {
-        _this3.createNewRecording();
-
-        if (_this3.paused) _this3.paused = false;
-        if (!_this3.timerRunning) _this3.runTimer();
-
-        _this3.timerRunning = true;
+        _this3.startRecording();
       }
 
       // else {
@@ -1333,14 +1317,18 @@ var Timer = function () {
       var _this4 = this;
 
       $("#play-button").on("click", function () {
-        // if (dashboard)
-        if (_this4.currentRecording) _this4.endCurrentRecording();
-
-        if (_this4.paused) _this4.paused = false;
-        if (!_this4.timerRunning) _this4.runTimer();
-
-        _this4.timerRunning = true;
+        _this4.play();
       });
+    }
+  }, {
+    key: 'play',
+    value: function play() {
+      if (this.currentRecording) this.endCurrentRecording();
+
+      if (this.paused) this.paused = false;
+      if (!this.timerRunning) this.runTimer();
+
+      this.timerRunning = true;
     }
   }, {
     key: 'expandTicker',
@@ -1365,9 +1353,48 @@ var Timer = function () {
       this.currentRecording.mapRecordingToKeys();
     }
   }, {
+    key: 'startRecording',
+    value: function startRecording() {
+      var dashboard = this.dashboard;
+      var instruments = dashboard.instruments;
+
+
+      if (instruments.length === 0) {
+        dashboard.addInstrument("piano");
+      }
+
+      // if (this.dashboard.selectedInstrument) {
+      this.createNewRecording();
+
+      if (this.paused) this.paused = false;
+      if (!this.timerRunning) this.runTimer();
+
+      this.timerRunning = true;
+    }
+  }, {
     key: 'endCurrentRecording',
     value: function endCurrentRecording() {
       this.currentRecording.endCurrentRecording();
+    }
+  }, {
+    key: 'controlRecordingsWithKeyboard',
+    value: function controlRecordingsWithKeyboard() {
+      var _this5 = this;
+
+      $(document).on("keypress", function (e) {
+        if (e.key === " " && _this5.timerRunning) {
+          e.preventDefault();
+          _this5.pauseTimer();
+        } else if (e.key === " ") {
+          e.preventDefault();
+
+          if (e.shiftKey) {
+            _this5.startRecording();
+          } else {
+            _this5.play();
+          }
+        }
+      });
     }
   }]);
 

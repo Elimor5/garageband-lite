@@ -19,14 +19,14 @@ class LinkedList {
     this.nodes.push(node);
   }
 
-  find(note, node) {
+  find(time, node) {
     if (!node) node = this.head;
-    if (note === node.note) {
+    if (time === node.startTime) {
       return node;
     } else if (node === this.tail) {
         return -1;
     } else {
-      return this.find(note,node.nextNode);
+      return this.find(time,node.nextNode);
     }
   }
 

@@ -69,7 +69,7 @@ class Timer {
 
   pauseTimer() {
     this.paused = true;
-    this.endCurrentRecording();
+    if (this.currentRecording) this.endCurrentRecording();
     this.stopInterval();
     this.timerRunning = false;
   }
@@ -109,6 +109,7 @@ class Timer {
   addListeners() {
     this.toggleRecording();
     this.togglePlay();
+    this.controlRecordingsWithKeyboard();
 
     $("#pause-button").on("click", () => this.pauseTimer());
     $("#stop-button").on("click", () => this.resetTimer());
@@ -116,20 +117,7 @@ class Timer {
 
   toggleRecording() {
     $("#record-button").on("click",() =>{
-      const { dashboard } = this;
-      const { recordings } = dashboard.recordingSuite;
-
-      if (recordings.length === 0) {
-        this.dashboard.addInstrument("piano");
-      }
-
-      // if (this.dashboard.selectedInstrument) {
-        this.createNewRecording();
-
-        if (this.paused) this.paused = false;
-        if (!this.timerRunning) this.runTimer();
-
-        this.timerRunning = true;
+      this.startRecording();
       }
 
       // else {
@@ -141,14 +129,17 @@ class Timer {
 
   togglePlay() {
     $("#play-button").on("click",() =>{
-      // if (dashboard)
-      if (this.currentRecording) this.endCurrentRecording();
-
-      if (this.paused) this.paused = false;
-      if (!this.timerRunning) this.runTimer();
-
-      this.timerRunning = true;
+      this.play();
     });
+  }
+
+  play() {
+    if (this.currentRecording) this.endCurrentRecording();
+
+    if (this.paused) this.paused = false;
+    if (!this.timerRunning) this.runTimer();
+
+    this.timerRunning = true;
   }
 
   expandTicker() {
@@ -170,8 +161,43 @@ class Timer {
     this.currentRecording.mapRecordingToKeys();
   }
 
+  startRecording() {
+    const { dashboard } = this;
+    const { instruments } = dashboard;
+
+    if (instruments.length === 0) {
+      dashboard.addInstrument("piano");
+    }
+
+    // if (this.dashboard.selectedInstrument) {
+      this.createNewRecording();
+
+      if (this.paused) this.paused = false;
+      if (!this.timerRunning) this.runTimer();
+
+      this.timerRunning = true;
+  }
+
   endCurrentRecording() {
     this.currentRecording.endCurrentRecording();
+  }
+
+  controlRecordingsWithKeyboard() {
+    $(document).on("keypress", (e) => {
+      if (e.key === " " && this.timerRunning) {
+        e.preventDefault();
+        this.pauseTimer();
+      } else if ( e.key === " ") {
+          e.preventDefault();
+
+          if (e.shiftKey) {
+            this.startRecording();
+          } else {
+            this.play();
+          }
+      }
+    });
+
   }
 }
 

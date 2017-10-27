@@ -44,9 +44,6 @@ class Key {
       if (listener === "mouse" || e.key === currentKeyChar) {
         if (this.currentRecording) {
           this.currentSoundByte.getEndPos();
-          console.log("ypos:" + this.currentSoundByte.yPos)
-          console.log("startpos:"+ this.currentSoundByte.startXPos);
-          console.log("endpos:"+ this.currentSoundByte.endXPos);
           this.currentSoundByte.drawLine();
           this.currentSoundByte = null;
 
