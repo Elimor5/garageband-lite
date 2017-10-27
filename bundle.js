@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,185 +79,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _timer = __webpack_require__(11);
-
-var _timer2 = _interopRequireDefault(_timer);
-
-var _instrument = __webpack_require__(4);
-
-var _instrument2 = _interopRequireDefault(_instrument);
-
-var _instruments_modal = __webpack_require__(5);
-
-var _instruments_modal2 = _interopRequireDefault(_instruments_modal);
-
-var _ticker = __webpack_require__(10);
-
-var _ticker2 = _interopRequireDefault(_ticker);
-
-var _recording_suite = __webpack_require__(9);
-
-var _recording_suite2 = _interopRequireDefault(_recording_suite);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Dashboard = function () {
-  function Dashboard(keyboard) {
-    _classCallCheck(this, Dashboard);
-
-    this.timer = new _timer2.default(this);
-    this.instruments = [];
-    this.modal = new _instruments_modal2.default();
-    this.modal.populateModal(this.addInstrument.bind(this));
-    this.keyboard = keyboard;
-    this.selectedInstrument = null;
-    this.ticker = new _ticker2.default(this.timer);
-    this.recordingSuite = new _recording_suite2.default();
-  }
-
-  _createClass(Dashboard, [{
-    key: 'addInstrument',
-    value: function addInstrument(instrumentType) {
-      var id = this.instruments.length;
-      var newInstrument = new _instrument2.default(id, instrumentType);
-      newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
-
-      this.instruments.push(newInstrument);
-      this.updateKeyboard(instrumentType);
-      this.updateSelectedInstrument(newInstrument);
-    }
-  }, {
-    key: 'updateSelectedInstrument',
-    value: function updateSelectedInstrument(instrument) {
-      var whiteBorder = '1px solid white';
-      var blueBorder = "1px solid #ADD8E6";
-
-      this.clearSelectedBorders(whiteBorder);
-
-      this.selectedInstrument = instrument;
-
-      this.selectedInstrument.instrumentLabel.css({ backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
-      this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
-    }
-  }, {
-    key: 'clearSelectedBorders',
-    value: function clearSelectedBorders(whiteBorder) {
-      if (this.selectedInstrument) {
-        var _selectedInstrument = this.selectedInstrument,
-            instrumentLabel = _selectedInstrument.instrumentLabel,
-            soundByteContainer = _selectedInstrument.soundByteContainer;
-
-
-        instrumentLabel.css({ backgroundColor: '', border: whiteBorder, zIndex: 0 });
-        soundByteContainer.css({ border: whiteBorder, zIndex: 0 });
-      }
-    }
-  }, {
-    key: 'updateKeyboard',
-    value: function updateKeyboard(instrumentType) {
-      this.keyboard.instrument = instrumentType;
-      this.keyboard.updateKeys();
-    }
-  }]);
-
-  return Dashboard;
-}();
-
-exports.default = Dashboard;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _key = __webpack_require__(6);
-
-var _key2 = _interopRequireDefault(_key);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Keyboard = function () {
-  function Keyboard() {
-    _classCallCheck(this, Keyboard);
-
-    this.keys = [];
-    this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'c2', 'd2', 'e2'];
-    this.sharpNotes = ["c", "d", "f", "g", "a", "c2", "d2"];
-
-    this.keyboardChars = "asdfghjkl;".split("");
-    this.sharpChars = "wetyuop".split("");
-    this.instrument = 'piano';
-    this.octave = 3;
-    this.dashboard = null;
-  }
-
-  _createClass(Keyboard, [{
-    key: 'populateKeys',
-    value: function populateKeys() {
-      for (var i = 0; i < this.notes.length; i++) {
-        var key = new _key2.default(this.notes[i], this.octave, this.keyboardChars[i]);
-        $("#keyboard").append(key.renderNote());
-        this.keys.push(key);
-
-        this.populateSharpKeys(key.note);
-      }
-    }
-  }, {
-    key: 'populateSharpKeys',
-    value: function populateSharpKeys(note) {
-      if (this.sharpNotes.includes(note)) {
-        var sharpNoteIndex = this.sharpNotes.indexOf(note);
-        var sharpKey = new _key2.default(note + '#', this.octave, this.sharpChars[sharpNoteIndex]);
-        var currentKey = $('#' + note);
-
-        currentKey.append(sharpKey.renderNote("sharp"));
-        this.keys.push(sharpKey);
-        currentKey.addClass('sharp-key-holder');
-      }
-    }
-  }, {
-    key: 'updateKeys',
-    value: function updateKeys() {
-      var _this = this;
-
-      this.keys.forEach(function (key) {
-        key.octave = _this.octave;
-        key.setAudio(_this.instrument);
-      });
-    }
-  }]);
-
-  return Keyboard;
-}();
-
-exports.default = Keyboard;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _node = __webpack_require__(7);
+var _node = __webpack_require__(1);
 
 var _node2 = _interopRequireDefault(_node);
 
@@ -339,7 +161,225 @@ var LinkedList = function () {
 exports.default = LinkedList;
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Node = function () {
+  function Node() {
+    _classCallCheck(this, Node);
+
+    this.prevNode = null;
+    this.nextNode = null;
+  }
+
+  _createClass(Node, [{
+    key: "setStartTime",
+    value: function setStartTime(time) {
+      this.startTime = time;
+    }
+  }, {
+    key: "setEndTime",
+    value: function setEndTime(time) {
+      this.endTime = time;
+    }
+  }]);
+
+  return Node;
+}();
+
+exports.default = Node;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _timer = __webpack_require__(12);
+
+var _timer2 = _interopRequireDefault(_timer);
+
+var _instrument = __webpack_require__(5);
+
+var _instrument2 = _interopRequireDefault(_instrument);
+
+var _instruments_modal = __webpack_require__(6);
+
+var _instruments_modal2 = _interopRequireDefault(_instruments_modal);
+
+var _ticker = __webpack_require__(11);
+
+var _ticker2 = _interopRequireDefault(_ticker);
+
+var _recording_suite = __webpack_require__(9);
+
+var _recording_suite2 = _interopRequireDefault(_recording_suite);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Dashboard = function () {
+  function Dashboard(keyboard) {
+    _classCallCheck(this, Dashboard);
+
+    this.timer = new _timer2.default(this);
+    this.instruments = [];
+    this.modal = new _instruments_modal2.default();
+    this.modal.populateModal(this.addInstrument.bind(this));
+    this.keyboard = keyboard;
+    this.selectedInstrument = null;
+    this.ticker = new _ticker2.default(this.timer);
+    this.recordingSuite = new _recording_suite2.default();
+  }
+
+  _createClass(Dashboard, [{
+    key: 'addInstrument',
+    value: function addInstrument(instrumentType) {
+      var id = this.instruments.length;
+      var newInstrument = new _instrument2.default(id, instrumentType);
+      newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
+
+      this.instruments.push(newInstrument);
+      this.updateKeyboard(instrumentType);
+      this.updateSelectedInstrument(newInstrument);
+    }
+  }, {
+    key: 'updateSelectedInstrument',
+    value: function updateSelectedInstrument(instrument) {
+      var whiteBorder = '1px solid white';
+      var blueBorder = "1px solid #ADD8E6";
+
+      this.clearSelectedBorders(whiteBorder);
+
+      this.selectedInstrument = instrument;
+
+      this.selectedInstrument.instrumentLabel.css({ backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
+      this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
+    }
+  }, {
+    key: 'clearSelectedBorders',
+    value: function clearSelectedBorders(whiteBorder) {
+      if (this.selectedInstrument) {
+        var _selectedInstrument = this.selectedInstrument,
+            instrumentLabel = _selectedInstrument.instrumentLabel,
+            soundByteContainer = _selectedInstrument.soundByteContainer;
+
+
+        instrumentLabel.css({ backgroundColor: '', border: whiteBorder, zIndex: 0 });
+        soundByteContainer.css({ border: whiteBorder, zIndex: 0 });
+      }
+    }
+  }, {
+    key: 'updateKeyboard',
+    value: function updateKeyboard(instrumentType) {
+      this.keyboard.instrument = instrumentType;
+      this.keyboard.updateKeys();
+    }
+  }]);
+
+  return Dashboard;
+}();
+
+exports.default = Dashboard;
+
+/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _key = __webpack_require__(7);
+
+var _key2 = _interopRequireDefault(_key);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Keyboard = function () {
+  function Keyboard() {
+    _classCallCheck(this, Keyboard);
+
+    this.keys = [];
+    this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'c2', 'd2', 'e2'];
+    this.sharpNotes = ["c", "d", "f", "g", "a", "c2", "d2"];
+
+    this.keyboardChars = "asdfghjkl;".split("");
+    this.sharpChars = "wetyuop".split("");
+    this.instrument = 'piano';
+    this.octave = 3;
+    this.dashboard = null;
+  }
+
+  _createClass(Keyboard, [{
+    key: 'populateKeys',
+    value: function populateKeys() {
+      for (var i = 0; i < this.notes.length; i++) {
+        var key = new _key2.default(this.notes[i], this.octave, this.keyboardChars[i]);
+        $("#keyboard").append(key.renderNote());
+        this.keys.push(key);
+
+        this.populateSharpKeys(key.note);
+      }
+    }
+  }, {
+    key: 'populateSharpKeys',
+    value: function populateSharpKeys(note) {
+      if (this.sharpNotes.includes(note)) {
+        var sharpNoteIndex = this.sharpNotes.indexOf(note);
+        var sharpKey = new _key2.default(note + '#', this.octave, this.sharpChars[sharpNoteIndex]);
+        var currentKey = $('#' + note);
+
+        currentKey.append(sharpKey.renderNote("sharp"));
+        this.keys.push(sharpKey);
+        currentKey.addClass('sharp-key-holder');
+      }
+    }
+  }, {
+    key: 'updateKeys',
+    value: function updateKeys() {
+      var _this = this;
+
+      this.keys.forEach(function (key) {
+        key.octave = _this.octave;
+        key.setAudio(_this.instrument);
+      });
+    }
+  }]);
+
+  return Keyboard;
+}();
+
+exports.default = Keyboard;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -386,7 +426,7 @@ var Cursor = function () {
 exports.default = Cursor;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -481,7 +521,7 @@ var Instrument = function () {
 exports.default = Instrument;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -577,7 +617,7 @@ var InstrumentsModal = function () {
 exports.default = InstrumentsModal;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -589,7 +629,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _sound_byte = __webpack_require__(13);
+var _sound_byte = __webpack_require__(10);
 
 var _sound_byte2 = _interopRequireDefault(_sound_byte);
 
@@ -685,46 +725,6 @@ var Key = function () {
 exports.default = Key;
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Node = function () {
-  function Node() {
-    _classCallCheck(this, Node);
-
-    this.prevNode = null;
-    this.nextNode = null;
-  }
-
-  _createClass(Node, [{
-    key: "setStartTime",
-    value: function setStartTime(time) {
-      this.startTime = time;
-    }
-  }, {
-    key: "setEndTime",
-    value: function setEndTime(time) {
-      this.endTime = time;
-    }
-  }]);
-
-  return Node;
-}();
-
-exports.default = Node;
-
-/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -737,7 +737,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _linked_list = __webpack_require__(2);
+var _linked_list = __webpack_require__(0);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
@@ -873,6 +873,112 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _node = __webpack_require__(1);
+
+var _node2 = _interopRequireDefault(_node);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SoundByte = function (_Node) {
+  _inherits(SoundByte, _Node);
+
+  function SoundByte(key, recording) {
+    _classCallCheck(this, SoundByte);
+
+    var _this = _possibleConstructorReturn(this, (SoundByte.__proto__ || Object.getPrototypeOf(SoundByte)).call(this));
+
+    _this.startTime = recording.timer.totalElapsedTime;
+    _this.endTime = null;
+    _this.recording = recording;
+    _this.key = key;
+    _this.yPos = null;
+    _this.startXPos = null;
+    _this.endXPos = null;
+    _this.addToRecording(_this.recording);
+    _this.getStartPositions();
+    return _this;
+  }
+
+  _createClass(SoundByte, [{
+    key: 'addToRecording',
+    value: function addToRecording(recording) {
+      recording.append(this);
+    }
+  }, {
+    key: 'getStartPositions',
+    value: function getStartPositions() {
+      this.getStartXPos();
+      this.getYPos();
+    }
+  }, {
+    key: 'drawLine',
+    value: function drawLine() {
+      var ctx = this.recording.ctx;
+
+      debugger;
+      ctx.moveTo(this.startXPos, this.yPos);
+      ctx.lineTo(this.endXPos, this.yPos);
+      ctx.strokeStyle = '#f1f1f1';
+      ctx.stroke();
+    }
+  }, {
+    key: 'getStartXPos',
+    value: function getStartXPos() {
+      var soundByteStartTime = this.startTime;
+      var recordingStartTime = this.recording.startTime;
+
+      this.startXPos = (soundByteStartTime - recordingStartTime) * 10;
+    }
+  }, {
+    key: 'getYPos',
+    value: function getYPos() {
+      var keys = this.recording.keyboard.keys;
+      var canvas = this.recording.canvas;
+
+      var notes = keys.map(function (key) {
+        return key.note;
+      });
+      var pos = notes.indexOf(this.key.note);
+      pos = pos === 0 ? pos + 0.1 : pos;
+
+      this.yPos = canvas[0].height / keys.length * pos;
+    }
+  }, {
+    key: 'getEndPos',
+    value: function getEndPos() {
+      var totalElapsedTime = this.recording.timer.totalElapsedTime;
+
+      var canvasStartTime = this.recording.startTime;
+
+      this.endTime = totalElapsedTime;
+      this.endXPos = (totalElapsedTime - canvasStartTime) * 10;
+    }
+  }]);
+
+  return SoundByte;
+}(_node2.default);
+
+exports.default = SoundByte;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Ticker = function () {
@@ -975,10 +1081,13 @@ var Ticker = function () {
 
       setCurrentTime = setCurrentTime.bind(this.timer);
       clearTimer = clearTimer.bind(this.timer);
+
       ticker.on("click", function (e) {
         e.stopPropagation();
-        var offset = e.screenX - 23;
-
+        debugger;
+        var offset = e.offsetX; //- 23;
+        console.log("offset " + offset);
+        console.log("e.screenX " + e.screenX);
         clearTimer();
         var seconds = Math.floor(offset / 10);
         _this.timer.seconds = seconds;
@@ -1005,7 +1114,7 @@ var Ticker = function () {
 exports.default = Ticker;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1017,7 +1126,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _cursor = __webpack_require__(3);
+var _cursor = __webpack_require__(4);
 
 var _cursor2 = _interopRequireDefault(_cursor);
 
@@ -1241,21 +1350,21 @@ var Timer = function () {
 exports.default = Timer;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _keyboard = __webpack_require__(1);
+var _keyboard = __webpack_require__(3);
 
 var _keyboard2 = _interopRequireDefault(_keyboard);
 
-var _linked_list = __webpack_require__(2);
+var _linked_list = __webpack_require__(0);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
-var _Dashboard = __webpack_require__(0);
+var _Dashboard = __webpack_require__(2);
 
 var _Dashboard2 = _interopRequireDefault(_Dashboard);
 
@@ -1301,112 +1410,6 @@ window.garagebandLite = new GaragebandLite();
 // for (var i = 1; i < 11; i++) {
 // song.append(new Node(i));
 // }
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _node = __webpack_require__(7);
-
-var _node2 = _interopRequireDefault(_node);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SoundByte = function (_Node) {
-  _inherits(SoundByte, _Node);
-
-  function SoundByte(key, recording) {
-    _classCallCheck(this, SoundByte);
-
-    var _this = _possibleConstructorReturn(this, (SoundByte.__proto__ || Object.getPrototypeOf(SoundByte)).call(this));
-
-    _this.startTime = recording.timer.totalElapsedTime;
-    _this.endTime = null;
-    _this.recording = recording;
-    _this.key = key;
-    _this.yPos = null;
-    _this.startXPos = null;
-    _this.endXPos = null;
-    _this.addToRecording(_this.recording);
-    _this.getStartPositions();
-    return _this;
-  }
-
-  _createClass(SoundByte, [{
-    key: 'addToRecording',
-    value: function addToRecording(recording) {
-      recording.append(this);
-    }
-  }, {
-    key: 'getStartPositions',
-    value: function getStartPositions() {
-      this.getStartXPos();
-      this.getYPos();
-    }
-  }, {
-    key: 'drawLine',
-    value: function drawLine() {
-      var ctx = this.recording.ctx;
-
-      debugger;
-      ctx.moveTo(this.startXPos, this.yPos);
-      ctx.lineTo(this.endXPos, this.yPos);
-      ctx.strokeStyle = '#f1f1f1';
-      ctx.stroke();
-    }
-  }, {
-    key: 'getStartXPos',
-    value: function getStartXPos() {
-      var soundByteStartTime = this.startTime;
-      var recordingStartTime = this.recording.startTime;
-
-      this.startXPos = (soundByteStartTime - recordingStartTime) * 10;
-    }
-  }, {
-    key: 'getYPos',
-    value: function getYPos() {
-      var keys = this.recording.keyboard.keys;
-      var canvas = this.recording.canvas;
-
-      var notes = keys.map(function (key) {
-        return key.note;
-      });
-      var pos = notes.indexOf(this.key.note);
-      pos = pos === 0 ? pos + 0.1 : pos;
-
-      this.yPos = canvas[0].height / keys.length * pos;
-    }
-  }, {
-    key: 'getEndPos',
-    value: function getEndPos() {
-      var totalElapsedTime = this.recording.timer.totalElapsedTime;
-
-      var canvasStartTime = this.recording.startTime;
-
-      this.endTime = totalElapsedTime;
-      this.endXPos = (totalElapsedTime - canvasStartTime) * 10;
-    }
-  }]);
-
-  return SoundByte;
-}(_node2.default);
-
-exports.default = SoundByte;
 
 /***/ })
 /******/ ]);

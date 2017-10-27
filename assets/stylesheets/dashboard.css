@@ -281,7 +281,8 @@
 
 .sound-bytes-inner {
   height: 100%;
-  width: 100%;
+  width: 1400px;
+  position: relative;
 }
 
 #cursor {
