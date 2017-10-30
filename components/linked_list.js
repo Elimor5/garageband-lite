@@ -21,7 +21,10 @@ class LinkedList {
 
   find(time, node) {
     if (!node) node = this.head;
-    if (time === node.startTime) {
+
+    if (time > node. startTime && time < node.endTime) {
+      return node;
+    } else if (node.startTime > time) {
       return node;
     } else if (node === this.tail) {
         return -1;

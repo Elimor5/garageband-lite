@@ -54,7 +54,11 @@ class Key {
     });
   }
 
-  startPlay() {
+  startPlay(seek) {
+    if (seek) {
+      this.sound.currentTime = seek;
+    }
+
     this.sound.play();
     this.keyDiv.addClass("opacity");
   }

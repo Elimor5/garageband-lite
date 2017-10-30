@@ -113,7 +113,10 @@ var LinkedList = function () {
     key: "find",
     value: function find(time, node) {
       if (!node) node = this.head;
-      if (time === node.startTime) {
+
+      if (time > node.startTime && time < node.endTime) {
+        return node;
+      } else if (node.startTime > time) {
         return node;
       } else if (node === this.tail) {
         return -1;
@@ -696,7 +699,11 @@ var Key = function () {
     }
   }, {
     key: 'startPlay',
-    value: function startPlay() {
+    value: function startPlay(seek) {
+      if (seek) {
+        this.sound.currentTime = seek;
+      }
+
       this.sound.play();
       this.keyDiv.addClass("opacity");
     }
@@ -980,6 +987,29 @@ var SoundByte = function (_Node) {
 
       this.endTime = totalElapsedTime;
       this.endXPos = (totalElapsedTime - canvasStartTime) * 10;
+    }
+  }, {
+    key: "play",
+    value: function play() {
+      var _this2 = this;
+
+      var totalElapsedTime = this.recording.timer.totalElapsedTime;
+
+      var startPlayTimeOffset = (this.startTime - totalElapsedTime) * 1000;
+      var endPlayTimeOffset = (this.endTime - this.startTime) * 1000;
+
+      setTimeout(function () {
+        if (totalElapsedTime > _this2.startTime) {
+          var seek = totalElapsedTime - _this2.startTime;
+          _this2.key.startPlay(seek);
+        } else {
+          _this2.key.startPlay();
+        }
+
+        setTimeout(function () {
+          _this2.key.endPlay();
+        }, endPlayTimeOffset);
+      }, startPlayTimeOffset);
     }
   }]);
 
