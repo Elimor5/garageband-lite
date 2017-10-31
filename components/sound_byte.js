@@ -11,6 +11,8 @@ export default class SoundByte extends Node {
     this.startXPos = null;
     this.endXPos = null;
     this.note = null;
+    this.octave = this.key.octave;
+    this.sound = this.key.sound
     this.addToRecording(this.recording);
     this.getStartPositions();
   }
@@ -78,18 +80,26 @@ export default class SoundByte extends Node {
     interval = setTimeout(() => {
       if (totalElapsedTime > this.startTime) {
         const seek = totalElapsedTime - this.startTime;
-        this.key.startPlay(seek);
+        this.playSound(seek);
       } else {
-          this.key.startPlay();
+          this.playSound();
       }
 
       setTimeout(() => {
-        this.key.endPlay();
+        this.sound.load();
         this.recording.soundByteQueue.pop();
       }, endPlayTimeOffset);
     }, startPlayTimeOffset);
 
     this.recording.soundByteQueue.push(interval);
 
+  }
+
+  playSound(seek) {
+    if (seek) {
+      this.sound.currentTime = seek;
+    }
+
+    this.sound.play();
   }
 }

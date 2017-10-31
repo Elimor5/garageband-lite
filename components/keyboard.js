@@ -11,6 +11,7 @@ class Keyboard {
     this.instrument = 'piano';
     this.octave = 3;
     this.dashboard = null;
+    this.addOctaveListeners();
   }
 
   populateKeys() {
@@ -41,6 +42,47 @@ class Keyboard {
       key.setAudio(this.instrument);
     });
   }
+
+  addOctaveListeners() {
+    this.increaseOctaveListener();
+    this.decreaseOctaveListener();
+    this.addOctaveKeyboardListners();
+  }
+
+  increaseOctaveListener() {
+    $("#octave-increase").on("click",() => {
+      this.adjustOctave(-1);
+    });
+  }
+
+  decreaseOctaveListener() {
+    $("#octave-decrease").on("click",() => {
+      this.adjustOctave(1);
+    });
+  }
+
+  addOctaveKeyboardListners() {
+    $(document).on("keypress", (e) => {
+      if ( e.key === ",") {
+        e.preventDefault();
+        this.adjustOctave(-1);
+      } else if (e.key === ".") {
+        e.preventDefault();
+        this.adjustOctave(1);
+      }
+    });
+  }
+
+  adjustOctave(num){
+    this.octave += num;
+    $("#current-octave-heading").text(`Current Octave: ${this.octave}`);
+    this.keys.forEach((key) => {
+      key.octave = this.octave;
+      key.setAudio(this.instrument);
+    });
+  }
+
+
 }
 
 export default Keyboard;

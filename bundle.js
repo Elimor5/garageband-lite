@@ -338,6 +338,7 @@ var Keyboard = function () {
     this.instrument = 'piano';
     this.octave = 3;
     this.dashboard = null;
+    this.addOctaveListeners();
   }
 
   _createClass(Keyboard, [{
@@ -372,6 +373,58 @@ var Keyboard = function () {
       this.keys.forEach(function (key) {
         key.octave = _this.octave;
         key.setAudio(_this.instrument);
+      });
+    }
+  }, {
+    key: 'addOctaveListeners',
+    value: function addOctaveListeners() {
+      this.increaseOctaveListener();
+      this.decreaseOctaveListener();
+      this.addOctaveKeyboardListners();
+    }
+  }, {
+    key: 'increaseOctaveListener',
+    value: function increaseOctaveListener() {
+      var _this2 = this;
+
+      $("#octave-increase").on("click", function () {
+        _this2.adjustOctave(-1);
+      });
+    }
+  }, {
+    key: 'decreaseOctaveListener',
+    value: function decreaseOctaveListener() {
+      var _this3 = this;
+
+      $("#octave-decrease").on("click", function () {
+        _this3.adjustOctave(1);
+      });
+    }
+  }, {
+    key: 'addOctaveKeyboardListners',
+    value: function addOctaveKeyboardListners() {
+      var _this4 = this;
+
+      $(document).on("keypress", function (e) {
+        if (e.key === ",") {
+          e.preventDefault();
+          _this4.adjustOctave(-1);
+        } else if (e.key === ".") {
+          e.preventDefault();
+          _this4.adjustOctave(1);
+        }
+      });
+    }
+  }, {
+    key: 'adjustOctave',
+    value: function adjustOctave(num) {
+      var _this5 = this;
+
+      this.octave += num;
+      $("#current-octave-heading").text('Current Octave: ' + this.octave);
+      this.keys.forEach(function (key) {
+        key.octave = _this5.octave;
+        key.setAudio(_this5.instrument);
       });
     }
   }]);
@@ -699,11 +752,7 @@ var Key = function () {
     }
   }, {
     key: 'startPlay',
-    value: function startPlay(seek) {
-      if (seek) {
-        this.sound.currentTime = seek;
-      }
-
+    value: function startPlay() {
       this.sound.play();
       this.keyDiv.addClass("opacity");
     }
@@ -934,6 +983,8 @@ var SoundByte = function (_Node) {
     _this.startXPos = null;
     _this.endXPos = null;
     _this.note = null;
+    _this.octave = _this.key.octave;
+    _this.sound = _this.key.sound;
     _this.addToRecording(_this.recording);
     _this.getStartPositions();
     return _this;
@@ -1019,18 +1070,27 @@ var SoundByte = function (_Node) {
       interval = setTimeout(function () {
         if (totalElapsedTime > _this2.startTime) {
           var seek = totalElapsedTime - _this2.startTime;
-          _this2.key.startPlay(seek);
+          _this2.playSound(seek);
         } else {
-          _this2.key.startPlay();
+          _this2.playSound();
         }
 
         setTimeout(function () {
-          _this2.key.endPlay();
+          _this2.sound.load();
           _this2.recording.soundByteQueue.pop();
         }, endPlayTimeOffset);
       }, startPlayTimeOffset);
 
       this.recording.soundByteQueue.push(interval);
+    }
+  }, {
+    key: "playSound",
+    value: function playSound(seek) {
+      if (seek) {
+        this.sound.currentTime = seek;
+      }
+
+      this.sound.play();
     }
   }]);
 
@@ -1149,11 +1209,13 @@ var Ticker = function () {
           setCurrentTime = _timer.setCurrentTime,
           cursor = _timer.cursor,
           clearTimer = _timer.clearTimer,
-          updateTimeVariables = _timer.updateTimeVariables;
+          updateTimeVariables = _timer.updateTimeVariables,
+          pauseTimer = _timer.pauseTimer;
 
       setCurrentTime = setCurrentTime.bind(this.timer);
       clearTimer = clearTimer.bind(this.timer);
       updateTimeVariables = updateTimeVariables.bind(this.timer);
+      pauseTimer = pauseTimer.bind(this.timer);
 
       ticker.on("click", function (e) {
         e.stopPropagation();
@@ -1163,6 +1225,7 @@ var Ticker = function () {
         clearTimer();
         updateTimeVariables(offset);
         setCurrentTime();
+        pauseTimer();
 
         cursor.seek(offset);
       });
@@ -1397,18 +1460,18 @@ var Timer = function () {
       if (!this.timerRunning) this.runTimer();
 
       this.timerRunning = true;
-      this.playRecording();
+      this.playRecordings();
     }
   }, {
-    key: 'playRecording',
-    value: function playRecording() {
+    key: 'playRecordings',
+    value: function playRecordings() {
       var _this5 = this;
 
       var recordings = this.dashboard.recordingSuite.recordings;
 
 
       recordings.forEach(function (recording) {
-        if (_this5.totalElapsedTime > recording.endTime) {
+        if (_this5.totalElapsedTime > recording.endTime || recording === _this5.currentRecording) {
           return;
         }
         recording.playAllSoundBytes(_this5.totalElapsedTime);
@@ -1447,13 +1510,13 @@ var Timer = function () {
         dashboard.addInstrument("piano");
       }
 
-      // if (this.dashboard.selectedInstrument) {
       this.createNewRecording();
 
       if (this.paused) this.paused = false;
       if (!this.timerRunning) this.runTimer();
-
       this.timerRunning = true;
+
+      this.playRecordings();
     }
   }, {
     key: 'endCurrentRecording',

@@ -79,10 +79,11 @@ class Ticker {
 
   addEventListener() {
     const ticker = $("#timer-ticker");
-    let { setCurrentTime, cursor, clearTimer, updateTimeVariables } = this.timer;
+    let { setCurrentTime, cursor, clearTimer, updateTimeVariables, pauseTimer } = this.timer;
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
     updateTimeVariables = updateTimeVariables.bind(this.timer);
+    pauseTimer = pauseTimer.bind(this.timer);
 
     ticker.on("click",(e) => {
       e.stopPropagation();
@@ -92,6 +93,7 @@ class Ticker {
       clearTimer();
       updateTimeVariables(offset);
       setCurrentTime();
+      pauseTimer();
 
       cursor.seek(offset);
     });

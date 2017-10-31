@@ -155,14 +155,14 @@ class Timer {
     if (!this.timerRunning) this.runTimer();
 
     this.timerRunning = true;
-    this.playRecording();
+    this.playRecordings();
   }
 
-  playRecording() {
+  playRecordings() {
     const { recordings } = this.dashboard.recordingSuite;
 
     recordings.forEach((recording) => {
-      if (this.totalElapsedTime > recording.endTime) {
+      if ((this.totalElapsedTime > recording.endTime) || (recording === this.currentRecording) ) {
         return;
       }
       recording.playAllSoundBytes(this.totalElapsedTime);
@@ -196,13 +196,14 @@ class Timer {
       dashboard.addInstrument("piano");
     }
 
-    // if (this.dashboard.selectedInstrument) {
       this.createNewRecording();
 
       if (this.paused) this.paused = false;
       if (!this.timerRunning) this.runTimer();
-
       this.timerRunning = true;
+
+      this.playRecordings();
+
   }
 
   endCurrentRecording() {

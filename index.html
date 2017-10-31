@@ -3,7 +3,7 @@
 <head>
 	<title>Garageband Lite</title>
   <script src="jquery-3.2.1.min.js"></script>
-  <link rel="stylesheet" href="./assets/stylesheets/dashboard.css" type="text/css">
+  <link rel="stylesheet" href="./assets/stylesheets/garageband_lite.css" type="text/css">
 </head>
 <body id="body">
   <div id=instruments-modal class="instruments-modal-hidden">
@@ -39,6 +39,17 @@
   </div>
   <div id='keyboard-dashboard'>
     <div id='keyboard'></div>
+    <div id="octave-toggle-container">
+      <div class="octave-toggle" id="octave-increase">
+        <h2 class="octave-toggle-text" >Decrease Octave</h2 >
+      </div>
+      <div class="octave-toggle" id="current-octave">
+        <h2 id="current-octave-heading"class="octave-toggle-text" >Current Octave: 3</h2 >
+      </div>
+      <div class="octave-toggle" id="octave-decrease">
+        <h2 class="octave-toggle-text" >Increase Octave</h2 >
+      </div>
+    </div>
   </div>
   <script src="bundle.js"></script>
 </body>
