@@ -148,7 +148,6 @@ class Timer {
   }
 
   play() {
-    const { recordings } = this.dashboard.recordingSuite;
 
     if (this.currentRecording) this.endCurrentRecording();
 
@@ -156,8 +155,16 @@ class Timer {
     if (!this.timerRunning) this.runTimer();
 
     this.timerRunning = true;
+    this.playRecording();
+  }
+
+  playRecording() {
+    const { recordings } = this.dashboard.recordingSuite;
 
     recordings.forEach((recording) => {
+      if (this.totalElapsedTime > recording.endTime) {
+        return;
+      }
       recording.playAllSoundBytes(this.totalElapsedTime);
     });
   }

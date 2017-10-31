@@ -4,6 +4,7 @@ import InstrumentsModal from './instruments_modal';
 import Ticker from './ticker';
 import RecordingSuite from './recording_suite';
 
+
 class Dashboard {
   constructor(keyboard) {
     this.timer = new Timer(this);

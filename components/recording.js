@@ -68,7 +68,9 @@ export default class Recording extends LinkedList {
   playAllSoundBytes(time, soundByte) {
     if (!soundByte) {
       soundByte = this.find(time);
-    } else if (soundByte === this.tail) {
+    } else if (soundByte === this.head) {
+      return this.playAllSoundBytes(time, soundByte.nextNode);
+    } else if (soundByte === this.tail || soundByte === -1) {
       return;
     }
 

@@ -843,7 +843,9 @@ var Recording = function (_LinkedList) {
     value: function playAllSoundBytes(time, soundByte) {
       if (!soundByte) {
         soundByte = this.find(time);
-      } else if (soundByte === this.tail) {
+      } else if (soundByte === this.head) {
+        return this.playAllSoundBytes(time, soundByte.nextNode);
+      } else if (soundByte === this.tail || soundByte === -1) {
         return;
       }
 
@@ -1388,10 +1390,6 @@ var Timer = function () {
   }, {
     key: 'play',
     value: function play() {
-      var _this5 = this;
-
-      var recordings = this.dashboard.recordingSuite.recordings;
-
 
       if (this.currentRecording) this.endCurrentRecording();
 
@@ -1399,8 +1397,20 @@ var Timer = function () {
       if (!this.timerRunning) this.runTimer();
 
       this.timerRunning = true;
+      this.playRecording();
+    }
+  }, {
+    key: 'playRecording',
+    value: function playRecording() {
+      var _this5 = this;
+
+      var recordings = this.dashboard.recordingSuite.recordings;
+
 
       recordings.forEach(function (recording) {
+        if (_this5.totalElapsedTime > recording.endTime) {
+          return;
+        }
         recording.playAllSoundBytes(_this5.totalElapsedTime);
       });
     }
