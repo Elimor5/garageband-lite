@@ -11,6 +11,7 @@ export default class Recording extends LinkedList {
     this.endTime = null;
     this.visual = null;
     this.startRecording();
+    this.soundByteQueue = [];
   }
 
   startRecording() {
@@ -70,7 +71,7 @@ export default class Recording extends LinkedList {
     } else if (soundByte === this.tail) {
       return;
     }
-    
+
     soundByte.play();
     return this.playAllSoundBytes(time,soundByte.nextNode);
   }

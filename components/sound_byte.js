@@ -73,19 +73,23 @@ export default class SoundByte extends Node {
     const { totalElapsedTime, timerRunning } = this.recording.timer;
     const startPlayTimeOffset = (this.startTime - totalElapsedTime  ) * 1000;
     const endPlayTimeOffset = (this.endTime - this.startTime) * 1000;
+    var interval;
 
-     setTimeout(() => {
+    interval = setTimeout(() => {
       if (totalElapsedTime > this.startTime) {
         const seek = totalElapsedTime - this.startTime;
-        if (timerRunning) this.key.startPlay(seek);
+        this.key.startPlay(seek);
       } else {
           this.key.startPlay();
       }
 
       setTimeout(() => {
         this.key.endPlay();
+        this.recording.soundByteQueue.pop();
       }, endPlayTimeOffset);
     }, startPlayTimeOffset);
+
+    this.recording.soundByteQueue.push(interval);
 
   }
 }

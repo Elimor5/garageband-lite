@@ -769,6 +769,7 @@ var Recording = function (_LinkedList) {
     _this.endTime = null;
     _this.visual = null;
     _this.startRecording();
+    _this.soundByteQueue = [];
     return _this;
   }
 
@@ -1011,19 +1012,23 @@ var SoundByte = function (_Node) {
 
       var startPlayTimeOffset = (this.startTime - totalElapsedTime) * 1000;
       var endPlayTimeOffset = (this.endTime - this.startTime) * 1000;
+      var interval;
 
-      setTimeout(function () {
+      interval = setTimeout(function () {
         if (totalElapsedTime > _this2.startTime) {
           var seek = totalElapsedTime - _this2.startTime;
-          if (timerRunning) _this2.key.startPlay(seek);
+          _this2.key.startPlay(seek);
         } else {
           _this2.key.startPlay();
         }
 
         setTimeout(function () {
           _this2.key.endPlay();
+          _this2.recording.soundByteQueue.pop();
         }, endPlayTimeOffset);
       }, startPlayTimeOffset);
+
+      this.recording.soundByteQueue.push(interval);
     }
   }]);
 
@@ -1277,7 +1282,23 @@ var Timer = function () {
   }, {
     key: 'stopInterval',
     value: function stopInterval() {
+      this.clearAllSoundByteQueues();
       window.clearInterval(this.interval);
+    }
+  }, {
+    key: 'clearAllSoundByteQueues',
+    value: function clearAllSoundByteQueues() {
+      var recordings = this.dashboard.recordingSuite.recordings;
+
+      recordings.forEach(function (recording) {
+        var soundByteQueue = recording.soundByteQueue;
+
+        if (soundByteQueue.length > 0) {
+          soundByteQueue.forEach(function (queue) {
+            clearTimeout(queue);
+          });
+        }
+      });
     }
   }, {
     key: 'pauseTimer',
@@ -1427,7 +1448,7 @@ var Timer = function () {
   }, {
     key: 'endCurrentRecording',
     value: function endCurrentRecording() {
-      this.currentRecording.endCurrentRecording();
+      if (this.currentRecording) this.currentRecording.endCurrentRecording();
     }
   }, {
     key: 'controlRecordingsWithKeyboard',

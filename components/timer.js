@@ -64,7 +64,21 @@ class Timer {
   }
 
   stopInterval() {
+    this.clearAllSoundByteQueues();
     window.clearInterval(this.interval);
+  }
+
+  clearAllSoundByteQueues() {
+    const { recordings } = this.dashboard.recordingSuite;
+    recordings.forEach((recording) => {
+      let soundByteQueue = recording.soundByteQueue;
+
+      if (soundByteQueue.length > 0) {
+        soundByteQueue.forEach((queue) => {
+          clearTimeout((queue));
+        });
+      }
+    });
   }
 
   pauseTimer() {
@@ -185,7 +199,7 @@ class Timer {
   }
 
   endCurrentRecording() {
-    this.currentRecording.endCurrentRecording();
+  if (this.currentRecording) this.currentRecording.endCurrentRecording();
   }
 
   controlRecordingsWithKeyboard() {
