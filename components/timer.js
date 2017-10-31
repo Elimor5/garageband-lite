@@ -134,12 +134,18 @@ class Timer {
   }
 
   play() {
+    const { recordings } = this.dashboard.recordingSuite;
+
     if (this.currentRecording) this.endCurrentRecording();
 
     if (this.paused) this.paused = false;
     if (!this.timerRunning) this.runTimer();
 
     this.timerRunning = true;
+
+    recordings.forEach((recording) => {
+      recording.playAllSoundBytes(this.totalElapsedTime);
+    });
   }
 
   expandTicker() {

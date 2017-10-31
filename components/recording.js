@@ -63,4 +63,15 @@ export default class Recording extends LinkedList {
       // gotta rerender every key with recording
     });
   }
+
+  playAllSoundBytes(time, soundByte) {
+    if (!soundByte) {
+      soundByte = this.find(time);
+    } else if (soundByte === this.tail) {
+      return;
+    }
+    
+    soundByte.play();
+    return this.playAllSoundBytes(time,soundByte.nextNode);
+  }
 }

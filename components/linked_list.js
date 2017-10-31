@@ -62,9 +62,6 @@ class LinkedList {
       return currentList.concat(this.returnList(node.nextNode));
     }
 
-
-
-
   }
 }
 

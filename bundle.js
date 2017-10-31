@@ -837,6 +837,18 @@ var Recording = function (_LinkedList) {
         // gotta rerender every key with recording
       });
     }
+  }, {
+    key: "playAllSoundBytes",
+    value: function playAllSoundBytes(time, soundByte) {
+      if (!soundByte) {
+        soundByte = this.find(time);
+      } else if (soundByte === this.tail) {
+        return;
+      }
+
+      soundByte.play();
+      return this.playAllSoundBytes(time, soundByte.nextNode);
+    }
   }]);
 
   return Recording;
@@ -993,7 +1005,9 @@ var SoundByte = function (_Node) {
     value: function play() {
       var _this2 = this;
 
-      var totalElapsedTime = this.recording.timer.totalElapsedTime;
+      var _recording$timer = this.recording.timer,
+          totalElapsedTime = _recording$timer.totalElapsedTime,
+          timerRunning = _recording$timer.timerRunning;
 
       var startPlayTimeOffset = (this.startTime - totalElapsedTime) * 1000;
       var endPlayTimeOffset = (this.endTime - this.startTime) * 1000;
@@ -1001,7 +1015,7 @@ var SoundByte = function (_Node) {
       setTimeout(function () {
         if (totalElapsedTime > _this2.startTime) {
           var seek = totalElapsedTime - _this2.startTime;
-          _this2.key.startPlay(seek);
+          if (timerRunning) _this2.key.startPlay(seek);
         } else {
           _this2.key.startPlay();
         }
@@ -1353,12 +1367,21 @@ var Timer = function () {
   }, {
     key: 'play',
     value: function play() {
+      var _this5 = this;
+
+      var recordings = this.dashboard.recordingSuite.recordings;
+
+
       if (this.currentRecording) this.endCurrentRecording();
 
       if (this.paused) this.paused = false;
       if (!this.timerRunning) this.runTimer();
 
       this.timerRunning = true;
+
+      recordings.forEach(function (recording) {
+        recording.playAllSoundBytes(_this5.totalElapsedTime);
+      });
     }
   }, {
     key: 'expandTicker',
@@ -1409,19 +1432,19 @@ var Timer = function () {
   }, {
     key: 'controlRecordingsWithKeyboard',
     value: function controlRecordingsWithKeyboard() {
-      var _this5 = this;
+      var _this6 = this;
 
       $(document).on("keypress", function (e) {
-        if (e.key === " " && _this5.timerRunning) {
+        if (e.key === " " && _this6.timerRunning) {
           e.preventDefault();
-          _this5.pauseTimer();
+          _this6.pauseTimer();
         } else if (e.key === " ") {
           e.preventDefault();
 
           if (e.shiftKey) {
-            _this5.startRecording();
+            _this6.startRecording();
           } else {
-            _this5.play();
+            _this6.play();
           }
         }
       });
