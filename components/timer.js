@@ -134,10 +134,6 @@ class Timer {
       this.startRecording();
       }
 
-      // else {
-      //   alert("You must add an instrument to the dashboard before recording!");
-      // }
-    // }
   );
   }
 
@@ -165,7 +161,7 @@ class Timer {
       if ((this.totalElapsedTime > recording.endTime) || (recording === this.currentRecording) ) {
         return;
       }
-      recording.playAllSoundBytes(this.totalElapsedTime);
+      recording.updateAllSoundBytes(this.totalElapsedTime, null, soundByte => soundByte.play());
     });
   }
 

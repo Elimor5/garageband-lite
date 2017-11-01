@@ -250,8 +250,8 @@ var Dashboard = function () {
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
     this.selectedInstrument = null;
-    this.ticker = new _ticker2.default(this.timer);
     this.recordingSuite = new _recording_suite2.default();
+    this.ticker = new _ticker2.default(this.timer);
   }
 
   _createClass(Dashboard, [{
@@ -822,6 +822,7 @@ var Recording = function (_LinkedList) {
 
     _this.keyboard = dashboard.keyboard;
     _this.selectedInstrument = dashboard.selectedInstrument;
+    _this.recordingSuite = dashboard.recordingSuite;
     _this.timer = dashboard.timer;
     _this.startTime = startTime;
     _this.id = _this.retrieveVisualId();
@@ -829,6 +830,7 @@ var Recording = function (_LinkedList) {
     _this.visual = null;
     _this.startRecording();
     _this.soundByteQueue = [];
+    _this.addRecordingListeners();
     return _this;
   }
 
@@ -898,18 +900,60 @@ var Recording = function (_LinkedList) {
       });
     }
   }, {
-    key: "playAllSoundBytes",
-    value: function playAllSoundBytes(time, soundByte) {
+    key: "updateAllSoundBytes",
+    value: function updateAllSoundBytes(time, soundByte, callback) {
       if (!soundByte) {
         soundByte = this.find(time);
       } else if (soundByte === this.head) {
-        return this.playAllSoundBytes(time, soundByte.nextNode);
+        return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
       } else if (soundByte === this.tail || soundByte === -1) {
         return;
       }
 
-      soundByte.play();
-      return this.playAllSoundBytes(time, soundByte.nextNode);
+      callback(soundByte);
+      return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
+    }
+  }, {
+    key: "addRecordingListeners",
+    value: function addRecordingListeners() {
+      this.clickToSelect();
+    }
+  }, {
+    key: "clickToSelect",
+    value: function clickToSelect() {
+      var toggleSelected = this.toggleSelected.bind(this);
+      this.visual.on("click", function () {
+        toggleSelected();
+      });
+    }
+  }, {
+    key: "toggleSelected",
+    value: function toggleSelected() {
+      var recordingSuite = this.recordingSuite;
+      var selectedRecording = recordingSuite.selectedRecording;
+
+
+      if (selectedRecording === this) {
+        recordingSuite.selectedRecording = null;
+        this.visual.removeClass("selected-recording");
+      } else if (this.endTime) {
+        recordingSuite.selectedRecording = this;
+        this.visual.addClass("selected-recording");
+      }
+    }
+  }, {
+    key: "setRecordingStartPos",
+    value: function setRecordingStartPos(pos) {
+      var originalStartTime = this.startTime;
+      var recordingLength = this.endTime - this.startTime;
+      var offset = pos / 10 - this.startTime;
+      this.visual.css({ left: pos });
+      this.startTime = pos / 10;
+      this.endTime = this.startTime + recordingLength;
+
+      this.updateAllSoundBytes(originalStartTime, null, function (soundByte) {
+        soundByte.updateStartPosition(offset);
+      });
     }
   }]);
 
@@ -938,6 +982,7 @@ var RecordingSuite = function () {
     _classCallCheck(this, RecordingSuite);
 
     this.recordings = [];
+    this.selectedRecording = null;
   }
 
   _createClass(RecordingSuite, [{
@@ -1010,6 +1055,16 @@ var SoundByte = function (_Node) {
     value: function getStartPositions() {
       this.getStartXPos();
       this.getYPos();
+    }
+  }, {
+    key: "updateStartPosition",
+    value: function updateStartPosition(offset) {
+      this.startTime = this.startTime + offset;
+      this.endTime = this.endTime + offset;
+
+      this.getStartPositions();
+      this.endXPos = this.endTime * 10;
+      this.note.css("left", this.startXPos);
     }
   }, {
     key: "drawLine",
@@ -1130,6 +1185,7 @@ var Ticker = function () {
 
     this.populateDashboardContainers();
     this.timer = timer;
+    this.dashboard = timer.dashboard;
     this.populateTicker(0, 1400);
     this.addEventListener();
     this.length = 1400;
@@ -1221,6 +1277,7 @@ var Ticker = function () {
           clearTimer = _timer.clearTimer,
           updateTimeVariables = _timer.updateTimeVariables,
           pauseTimer = _timer.pauseTimer;
+      var recordingSuite = this.dashboard.recordingSuite;
 
       setCurrentTime = setCurrentTime.bind(this.timer);
       clearTimer = clearTimer.bind(this.timer);
@@ -1236,6 +1293,8 @@ var Ticker = function () {
         updateTimeVariables(offset);
         setCurrentTime();
         pauseTimer();
+
+        if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
 
         cursor.seek(offset);
       });
@@ -1443,13 +1502,7 @@ var Timer = function () {
 
       $("#record-button").on("click", function () {
         _this3.startRecording();
-      }
-
-      // else {
-      //   alert("You must add an instrument to the dashboard before recording!");
-      // }
-      // }
-      );
+      });
     }
   }, {
     key: 'togglePlay',
@@ -1484,7 +1537,9 @@ var Timer = function () {
         if (_this5.totalElapsedTime > recording.endTime || recording === _this5.currentRecording) {
           return;
         }
-        recording.playAllSoundBytes(_this5.totalElapsedTime);
+        recording.updateAllSoundBytes(_this5.totalElapsedTime, null, function (soundByte) {
+          return soundByte.play();
+        });
       });
     }
   }, {

@@ -12,7 +12,7 @@ export default class SoundByte extends Node {
     this.endXPos = null;
     this.note = null;
     this.octave = this.key.octave;
-    this.sound = this.key.sound
+    this.sound = this.key.sound;
     this.addToRecording(this.recording);
     this.getStartPositions();
   }
@@ -24,6 +24,15 @@ export default class SoundByte extends Node {
   getStartPositions() {
     this.getStartXPos();
     this.getYPos();
+  }
+
+  updateStartPosition(offset) {
+    this.startTime = this.startTime + offset;
+    this.endTime = this.endTime + offset;
+    
+    this.getStartPositions();
+    this.endXPos = this.endTime * 10;
+    this.note.css("left", this.startXPos);
   }
 
   drawLine() {

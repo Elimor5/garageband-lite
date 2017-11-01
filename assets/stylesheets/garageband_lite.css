@@ -279,7 +279,7 @@
   margin-bottom: 1px;
 }
 
-.instrument-label:hover {
+.instrument-label:hover, .sound-byte-visual:hover {
   cursor: pointer;
 }
 
@@ -373,4 +373,8 @@
   background-color: #735e5e;
   border-radius: 43px;
   position: absolute;
+}
+
+.selected-recording {
+  background-color: orange !important;
 }

@@ -13,8 +13,8 @@ class Dashboard {
     this.modal.populateModal(this.addInstrument.bind(this));
     this.keyboard = keyboard;
     this.selectedInstrument = null;
-    this.ticker = new Ticker(this.timer);
     this.recordingSuite = new RecordingSuite();
+    this.ticker = new Ticker(this.timer);
   }
 
   addInstrument(instrumentType) {

@@ -2,6 +2,7 @@ class Ticker {
   constructor(timer) {
     this.populateDashboardContainers();
     this.timer = timer;
+    this.dashboard = timer.dashboard;
     this.populateTicker(0, 1400);
     this.addEventListener();
     this.length = 1400;
@@ -80,6 +81,8 @@ class Ticker {
   addEventListener() {
     const ticker = $("#timer-ticker");
     let { setCurrentTime, cursor, clearTimer, updateTimeVariables, pauseTimer } = this.timer;
+    
+    let { recordingSuite } = this.dashboard;
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
     updateTimeVariables = updateTimeVariables.bind(this.timer);
@@ -95,10 +98,11 @@ class Ticker {
       setCurrentTime();
       pauseTimer();
 
+      if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
+
       cursor.seek(offset);
     });
   }
-
 
 
   expandTickerContainer() {

@@ -1,6 +1,7 @@
 export default class RecordingSuite {
   constructor() {
     this.recordings = [];
+    this.selectedRecording = null;
   }
 
   push(el) {
