@@ -166,7 +166,7 @@ var LinkedList = function () {
       } else if (soundByte === this.tail || soundByte === -1) {
         return;
       }
-      debugger;
+
       callback(soundByte);
       return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
     }
@@ -1000,23 +1000,36 @@ var Recording = function (_LinkedList) {
     }
   }, {
     key: "removeAllSoundBytePositionVisuals",
-    value: function removeAllSoundBytePositionVisuals(time) {
-      this.updateAllSoundBytes(time, null, function (soundByte) {
+    value: function removeAllSoundBytePositionVisuals() {
+      this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
         soundByte.removeVisual();
       });
     }
   }, {
-    key: "delete",
-    value: function _delete() {
+    key: "addAllSoundBytePositions",
+    value: function addAllSoundBytePositions() {
+      var _this3 = this;
+
+      this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
+        soundByte.recording = _this3;
+        soundByte.drawLine();
+      });
+    }
+  }, {
+    key: "deleteVisual",
+    value: function deleteVisual() {
       this.visual.remove();
     }
   }, {
     key: "resizeRecording",
     value: function resizeRecording() {
-      var width = (this.endTime - this.startTime) * 10;
-      this.visual.width({ width: recordingLength });
+      var recordingLength = this.endTime - this.startTime;
+      var width = recordingLength * 10;
 
-      this.updateAllSoundBytePositions(this.startTime, this.startTime);
+      this.visual.css({ width: width, backgroundColor: "#84DAA1" });
+
+      this.addAllSoundBytePositions();
+      this.updateAllSoundBytePositions(this.startTime, 0);
     }
   }]);
 
@@ -1069,7 +1082,7 @@ var RecordingSuite = function () {
         if (_this.selectedRecording) {
           var recordingIdx = _this.recordings.indexOf(_this.selectedRecording);
           _this.recordings.splice(recordingIdx, 1);
-          _this.selectedRecording.delete();
+          _this.selectedRecording.deleteVisual();
           _this.selectedRecording = null;
         }
       });
@@ -1084,13 +1097,19 @@ var RecordingSuite = function () {
 
 
         if (selectedRecording) {
-          // const { timer, dashboard } = selectedRecording;
-          // const time = timer.totalElapsedTime;
-          // const newRecording = new Recording(dashboard, time);
-          //
-          // selectedRecording.splitNodes(time, newRecording);
-          // this.recordings.push(newRecording);
-          selectedRecording.removeAllSoundBytePositionVisuals(selectedRecording.startTime);
+          var timer = selectedRecording.timer,
+              dashboard = selectedRecording.dashboard;
+
+          var time = timer.totalElapsedTime;
+          var newRecording = new _recording2.default(dashboard, time);
+
+          selectedRecording.removeAllSoundBytePositionVisuals();
+
+          selectedRecording.splitNodes(time, newRecording);
+          _this2.recordings.push(newRecording);
+
+          _this2.selectedRecording.resizeRecording();
+          newRecording.resizeRecording();
         }
       });
     }

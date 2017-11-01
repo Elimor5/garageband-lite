@@ -110,20 +110,30 @@ export default class Recording extends LinkedList {
     });
   }
 
-  removeAllSoundBytePositionVisuals(time) {
-    this.updateAllSoundBytes(time, null, (soundByte) => {
+  removeAllSoundBytePositionVisuals() {
+    this.updateAllSoundBytes(this.startTime, null, (soundByte) => {
       soundByte.removeVisual();
     });
   }
 
-  delete() {
+  addAllSoundBytePositions() {
+    this.updateAllSoundBytes(this.startTime, null, (soundByte) => {
+      soundByte.recording = this;
+      soundByte.drawLine();
+    });
+  }
+
+  deleteVisual() {
     this.visual.remove();
   }
 
   resizeRecording() {
-    const width = ( this.endTime - this.startTime ) * 10;
-    this.visual.width({ width: recordingLength });
+    const recordingLength = this.endTime - this.startTime;
+    const width = ( recordingLength ) * 10;
 
-    this.updateAllSoundBytePositions(this.startTime, this.startTime);
+    this.visual.css({ width: width, backgroundColor: "#84DAA1" });
+
+    this.addAllSoundBytePositions();
+    this.updateAllSoundBytePositions(this.startTime, 0);
   }
 }

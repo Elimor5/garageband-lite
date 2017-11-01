@@ -16,7 +16,7 @@ export default class RecordingSuite {
       if (this.selectedRecording) {
         const recordingIdx = this.recordings.indexOf(this.selectedRecording);
         this.recordings.splice(recordingIdx, 1);
-        this.selectedRecording.delete();
+        this.selectedRecording.deleteVisual();
         this.selectedRecording = null;
       }
     });
@@ -28,13 +28,19 @@ export default class RecordingSuite {
       const { selectedRecording } = this;
 
       if (selectedRecording) {
-        // const { timer, dashboard } = selectedRecording;
-        // const time = timer.totalElapsedTime;
-        // const newRecording = new Recording(dashboard, time);
-        //
-        // selectedRecording.splitNodes(time, newRecording);
-        // this.recordings.push(newRecording);
-        selectedRecording.removeAllSoundBytePositionVisuals(selectedRecording.startTime);
+        const { timer, dashboard } = selectedRecording;
+        const time = timer.totalElapsedTime;
+        const newRecording = new Recording(dashboard, time);
+
+        selectedRecording.removeAllSoundBytePositionVisuals();
+
+        selectedRecording.splitNodes(time, newRecording);
+        this.recordings.push(newRecording);
+
+
+        this.selectedRecording.resizeRecording();
+        newRecording.resizeRecording();
+
       }
     });
   }

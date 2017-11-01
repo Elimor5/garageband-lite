@@ -72,7 +72,7 @@ class LinkedList {
     } else if (soundByte === this.tail || soundByte === -1) {
       return;
     }
-    debugger
+    
     callback(soundByte);
     return this.updateAllSoundBytes(time,soundByte.nextNode, callback);
   }
