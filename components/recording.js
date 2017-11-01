@@ -117,8 +117,9 @@ export default class Recording extends LinkedList {
   }
 
   addAllSoundBytePositions() {
+    const recording = this;
     this.updateAllSoundBytes(this.startTime, null, (soundByte) => {
-      soundByte.recording = this;
+      soundByte.recording = recording;
       soundByte.drawLine();
     });
   }

@@ -1008,10 +1008,9 @@ var Recording = function (_LinkedList) {
   }, {
     key: "addAllSoundBytePositions",
     value: function addAllSoundBytePositions() {
-      var _this3 = this;
-
+      var recording = this;
       this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
-        soundByte.recording = _this3;
+        soundByte.recording = recording;
         soundByte.drawLine();
       });
     }
@@ -1192,7 +1191,8 @@ var SoundByte = function (_Node) {
       this.endTime = this.endTime + offset;
 
       this.getStartPositions();
-      this.endXPos = this.endTime * 10;
+
+      this.endXPos = (this.endTime - this.recording.startTime) * 10;
       this.note.css("left", this.startXPos);
     }
   }, {

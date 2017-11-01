@@ -31,7 +31,8 @@ export default class SoundByte extends Node {
     this.endTime = this.endTime + offset;
 
     this.getStartPositions();
-    this.endXPos = this.endTime * 10;
+
+    this.endXPos = (this.endTime - this.recording.startTime) * 10;
     this.note.css("left", this.startXPos);
   }
 
