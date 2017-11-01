@@ -74,7 +74,17 @@ class Keyboard {
   }
 
   adjustOctave(num){
-    this.octave += num;
+    let min;
+    let max;
+    let newOctave = this.octave + num;
+
+    if (this.instrument === "piano") {
+      min = 0;
+      max = 5;
+    }
+
+    if (newOctave > (min - 1) && newOctave < (max + 1)) this.octave = newOctave ;
+
     $("#current-octave-heading").text(`Current Octave: ${this.octave}`);
     this.keys.forEach((key) => {
       key.octave = this.octave;

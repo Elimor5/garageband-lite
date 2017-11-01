@@ -420,7 +420,17 @@ var Keyboard = function () {
     value: function adjustOctave(num) {
       var _this5 = this;
 
-      this.octave += num;
+      var min = void 0;
+      var max = void 0;
+      var newOctave = this.octave + num;
+
+      if (this.instrument === "piano") {
+        min = 0;
+        max = 5;
+      }
+
+      if (newOctave > min - 1 && newOctave < max + 1) this.octave = newOctave;
+
       $("#current-octave-heading").text('Current Octave: ' + this.octave);
       this.keys.forEach(function (key) {
         key.octave = _this5.octave;

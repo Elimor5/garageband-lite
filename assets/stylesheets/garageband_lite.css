@@ -64,6 +64,11 @@
 
 .octave-toggle-text {
   text-align: center;
+  margin-bottom: 3px;
+}
+
+.octave-toggle-text:hover {
+  cursor: pointer;
 }
 
 
@@ -78,6 +83,11 @@
   flex-direction: column;
   justify-content: center;
   border-radius: 4px;
+  align-items: center;
+}
+
+.octave-toggle:hover {
+  cursor: pointer;
 }
 
 
@@ -100,8 +110,16 @@
   margin-bottom: 10px;
 }
 
+.key-label:hover {
+  cursor: pointer;
+}
+
 .opacity {
   background-color: gray;
+}
+
+.piano-key:hover, sharp-key:hover {
+  cursor: pointer;
 }
 
 
