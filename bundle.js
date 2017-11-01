@@ -166,10 +166,47 @@ var LinkedList = function () {
       } else if (soundByte === this.tail || soundByte === -1) {
         return;
       }
-
+      debugger;
       callback(soundByte);
       return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
     }
+  }, {
+    key: "splitNodes",
+    value: function splitNodes(time, newList) {
+      var firstListLastNode = this.tail.prevNode;
+      var splitNode = this.find(time);
+      var newlastNode = splitNode.prevNode;
+
+      //reset first list's tail
+      newlastNode.nextNode = this.tail;
+      this.tail.prevNode = newlastNode;
+
+      //set splitNode to new list
+      newList.head.nextNode = splitNode;
+      splitNode.prevNode = newList.head;
+
+      //set end of split nodes to end of new list
+      firstListLastNode.nextNode = newList.tail;
+      newList.tail.prevNode = firstListLastNode;
+
+      // split nodes into respective recording arrays
+      var splitNodeIdx = this.nodes.indexOf(splitNode);
+      var originalListNodes = this.nodes.slice(0, splitNodeIdx);
+      var newListNodes = this.nodes.slice(splitNodeIdx);
+
+      this.nodes = originalListNodes;
+      newList.nodes = newList.nodes.concat(newListNodes);
+
+      //update start && endtimes
+      newList.endTime = this.endTime;
+      this.endTime = time;
+      newList.startTime = time;
+    }
+
+    // updateVisual( endTime) {
+    //
+    // }
+
   }]);
 
   return LinkedList;
@@ -835,6 +872,7 @@ var Recording = function (_LinkedList) {
     var _this = _possibleConstructorReturn(this, (Recording.__proto__ || Object.getPrototypeOf(Recording)).call(this));
 
     _this.keyboard = dashboard.keyboard;
+    _this.dashboard = dashboard;
     _this.selectedInstrument = dashboard.selectedInstrument;
     _this.recordingSuite = dashboard.recordingSuite;
     _this.timer = dashboard.timer;
@@ -951,14 +989,34 @@ var Recording = function (_LinkedList) {
       this.startTime = pos / 10;
       this.endTime = this.startTime + recordingLength;
 
+      this.updateAllSoundBytePositions(originalStartTime, offset);
+    }
+  }, {
+    key: "updateAllSoundBytePositions",
+    value: function updateAllSoundBytePositions(originalStartTime, offset) {
       this.updateAllSoundBytes(originalStartTime, null, function (soundByte) {
         soundByte.updateStartPosition(offset);
+      });
+    }
+  }, {
+    key: "removeAllSoundBytePositionVisuals",
+    value: function removeAllSoundBytePositionVisuals(time) {
+      this.updateAllSoundBytes(time, null, function (soundByte) {
+        soundByte.removeVisual();
       });
     }
   }, {
     key: "delete",
     value: function _delete() {
       this.visual.remove();
+    }
+  }, {
+    key: "resizeRecording",
+    value: function resizeRecording() {
+      var width = (this.endTime - this.startTime) * 10;
+      this.visual.width({ width: recordingLength });
+
+      this.updateAllSoundBytePositions(this.startTime, this.startTime);
     }
   }]);
 
@@ -979,6 +1037,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _recording = __webpack_require__(8);
+
+var _recording2 = _interopRequireDefault(_recording);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1002,7 +1066,6 @@ var RecordingSuite = function () {
       var _this = this;
 
       $("#delete-recording").on("click", function () {
-        debugger;
         if (_this.selectedRecording) {
           var recordingIdx = _this.recordings.indexOf(_this.selectedRecording);
           _this.recordings.splice(recordingIdx, 1);
@@ -1012,9 +1075,30 @@ var RecordingSuite = function () {
       });
     }
   }, {
+    key: "splitRecording",
+    value: function splitRecording() {
+      var _this2 = this;
+
+      $("#split-recording").on("click", function () {
+        var selectedRecording = _this2.selectedRecording;
+
+
+        if (selectedRecording) {
+          // const { timer, dashboard } = selectedRecording;
+          // const time = timer.totalElapsedTime;
+          // const newRecording = new Recording(dashboard, time);
+          //
+          // selectedRecording.splitNodes(time, newRecording);
+          // this.recordings.push(newRecording);
+          selectedRecording.removeAllSoundBytePositionVisuals(selectedRecording.startTime);
+        }
+      });
+    }
+  }, {
     key: "addRecordSuiteListeners",
     value: function addRecordSuiteListeners() {
       this.deleteRecording();
+      this.splitRecording();
     }
   }]);
 
@@ -1091,6 +1175,11 @@ var SoundByte = function (_Node) {
       this.getStartPositions();
       this.endXPos = this.endTime * 10;
       this.note.css("left", this.startXPos);
+    }
+  }, {
+    key: "removeVisual",
+    value: function removeVisual() {
+      this.note.remove();
     }
   }, {
     key: "drawLine",

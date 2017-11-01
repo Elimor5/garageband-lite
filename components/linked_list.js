@@ -72,10 +72,45 @@ class LinkedList {
     } else if (soundByte === this.tail || soundByte === -1) {
       return;
     }
-
+    debugger
     callback(soundByte);
     return this.updateAllSoundBytes(time,soundByte.nextNode, callback);
   }
+
+  splitNodes(time, newList) {
+    const firstListLastNode = this.tail.prevNode;
+    const splitNode = this.find(time);
+    const newlastNode = splitNode.prevNode;
+
+    //reset first list's tail
+    newlastNode.nextNode = this.tail;
+    this.tail.prevNode = newlastNode;
+
+    //set splitNode to new list
+    newList.head.nextNode = splitNode;
+    splitNode.prevNode = newList.head;
+
+    //set end of split nodes to end of new list
+    firstListLastNode.nextNode = newList.tail;
+    newList.tail.prevNode = firstListLastNode;
+
+    // split nodes into respective recording arrays
+    const splitNodeIdx = this.nodes.indexOf(splitNode);
+    const originalListNodes = this.nodes.slice(0, splitNodeIdx);
+    const newListNodes = this.nodes.slice(splitNodeIdx);
+
+    this.nodes = originalListNodes;
+    newList.nodes = newList.nodes.concat(newListNodes);
+
+    //update start && endtimes
+    newList.endTime = this.endTime;
+    this.endTime = time;
+    newList.startTime = time;
+  }
+
+  // updateVisual( endTime) {
+  //
+  // }
 }
 
 export default LinkedList;

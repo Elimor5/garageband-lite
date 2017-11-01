@@ -4,6 +4,7 @@ export default class Recording extends LinkedList {
   constructor(dashboard, startTime) {
     super();
     this.keyboard = dashboard.keyboard;
+    this.dashboard = dashboard;
     this.selectedInstrument = dashboard.selectedInstrument;
     this.recordingSuite = dashboard.recordingSuite;
     this.timer = dashboard.timer;
@@ -100,12 +101,29 @@ export default class Recording extends LinkedList {
     this.startTime = pos / 10;
     this.endTime = this.startTime + recordingLength;
 
+    this.updateAllSoundBytePositions(originalStartTime,offset);
+  }
+
+  updateAllSoundBytePositions(originalStartTime, offset) {
     this.updateAllSoundBytes(originalStartTime, null, (soundByte) => {
       soundByte.updateStartPosition(offset);
     });
   }
 
+  removeAllSoundBytePositionVisuals(time) {
+    this.updateAllSoundBytes(time, null, (soundByte) => {
+      soundByte.removeVisual();
+    });
+  }
+
   delete() {
     this.visual.remove();
+  }
+
+  resizeRecording() {
+    const width = ( this.endTime - this.startTime ) * 10;
+    this.visual.width({ width: recordingLength });
+
+    this.updateAllSoundBytePositions(this.startTime, this.startTime);
   }
 }

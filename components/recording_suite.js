@@ -1,3 +1,5 @@
+import Recording from './recording';
+
 export default class RecordingSuite {
   constructor() {
     this.recordings = [];
@@ -11,7 +13,6 @@ export default class RecordingSuite {
 
   deleteRecording() {
     $("#delete-recording").on("click",() => {
-      debugger
       if (this.selectedRecording) {
         const recordingIdx = this.recordings.indexOf(this.selectedRecording);
         this.recordings.splice(recordingIdx, 1);
@@ -21,7 +22,25 @@ export default class RecordingSuite {
     });
   }
 
+  splitRecording() {
+    $("#split-recording").on("click", () => {
+
+      const { selectedRecording } = this;
+
+      if (selectedRecording) {
+        // const { timer, dashboard } = selectedRecording;
+        // const time = timer.totalElapsedTime;
+        // const newRecording = new Recording(dashboard, time);
+        //
+        // selectedRecording.splitNodes(time, newRecording);
+        // this.recordings.push(newRecording);
+        selectedRecording.removeAllSoundBytePositionVisuals(selectedRecording.startTime);
+      }
+    });
+  }
+
   addRecordSuiteListeners() {
     this.deleteRecording();
+    this.splitRecording();
   }
 }
