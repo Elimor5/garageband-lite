@@ -63,6 +63,19 @@ class LinkedList {
     }
 
   }
+
+  updateAllSoundBytes(time, soundByte, callback) {
+    if (!soundByte) {
+      soundByte = this.find(time);
+    } else if (soundByte === this.head) {
+      return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
+    } else if (soundByte === this.tail || soundByte === -1) {
+      return;
+    }
+
+    callback(soundByte);
+    return this.updateAllSoundBytes(time,soundByte.nextNode, callback);
+  }
 }
 
 export default LinkedList;

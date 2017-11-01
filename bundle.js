@@ -156,6 +156,20 @@ var LinkedList = function () {
         return currentList.concat(this.returnList(node.nextNode));
       }
     }
+  }, {
+    key: "updateAllSoundBytes",
+    value: function updateAllSoundBytes(time, soundByte, callback) {
+      if (!soundByte) {
+        soundByte = this.find(time);
+      } else if (soundByte === this.head) {
+        return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
+      } else if (soundByte === this.tail || soundByte === -1) {
+        return;
+      }
+
+      callback(soundByte);
+      return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
+    }
   }]);
 
   return LinkedList;
@@ -900,20 +914,6 @@ var Recording = function (_LinkedList) {
       });
     }
   }, {
-    key: "updateAllSoundBytes",
-    value: function updateAllSoundBytes(time, soundByte, callback) {
-      if (!soundByte) {
-        soundByte = this.find(time);
-      } else if (soundByte === this.head) {
-        return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
-      } else if (soundByte === this.tail || soundByte === -1) {
-        return;
-      }
-
-      callback(soundByte);
-      return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
-    }
-  }, {
     key: "addRecordingListeners",
     value: function addRecordingListeners() {
       this.clickToSelect();
@@ -936,7 +936,7 @@ var Recording = function (_LinkedList) {
       if (selectedRecording === this) {
         recordingSuite.selectedRecording = null;
         this.visual.removeClass("selected-recording");
-      } else if (this.endTime) {
+      } else if (this.endTime && !selectedRecording) {
         recordingSuite.selectedRecording = this;
         this.visual.addClass("selected-recording");
       }
@@ -954,6 +954,11 @@ var Recording = function (_LinkedList) {
       this.updateAllSoundBytes(originalStartTime, null, function (soundByte) {
         soundByte.updateStartPosition(offset);
       });
+    }
+  }, {
+    key: "delete",
+    value: function _delete() {
+      this.visual.remove();
     }
   }]);
 
@@ -983,12 +988,33 @@ var RecordingSuite = function () {
 
     this.recordings = [];
     this.selectedRecording = null;
+    this.addRecordSuiteListeners();
   }
 
   _createClass(RecordingSuite, [{
     key: "push",
     value: function push(el) {
       this.recordings.push(el);
+    }
+  }, {
+    key: "deleteRecording",
+    value: function deleteRecording() {
+      var _this = this;
+
+      $("#delete-recording").on("click", function () {
+        debugger;
+        if (_this.selectedRecording) {
+          var recordingIdx = _this.recordings.indexOf(_this.selectedRecording);
+          _this.recordings.splice(recordingIdx, 1);
+          _this.selectedRecording.delete();
+          _this.selectedRecording = null;
+        }
+      });
+    }
+  }, {
+    key: "addRecordSuiteListeners",
+    value: function addRecordSuiteListeners() {
+      this.deleteRecording();
     }
   }]);
 

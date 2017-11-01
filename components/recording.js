@@ -67,19 +67,6 @@ export default class Recording extends LinkedList {
     });
   }
 
-  updateAllSoundBytes(time, soundByte, callback) {
-    if (!soundByte) {
-      soundByte = this.find(time);
-    } else if (soundByte === this.head) {
-      return this.updateAllSoundBytes(time, soundByte.nextNode, callback);
-    } else if (soundByte === this.tail || soundByte === -1) {
-      return;
-    }
-    
-    callback(soundByte);
-    return this.updateAllSoundBytes(time,soundByte.nextNode, callback);
-  }
-
   addRecordingListeners() {
     this.clickToSelect();
   }
@@ -98,7 +85,7 @@ export default class Recording extends LinkedList {
     if (selectedRecording === this) {
       recordingSuite.selectedRecording = null;
       this.visual.removeClass("selected-recording");
-    } else if (this.endTime){
+    } else if (this.endTime && !selectedRecording){
       recordingSuite.selectedRecording = this;
       this.visual.addClass("selected-recording");
     }
@@ -118,4 +105,7 @@ export default class Recording extends LinkedList {
     });
   }
 
+  delete() {
+    this.visual.remove();
+  }
 }

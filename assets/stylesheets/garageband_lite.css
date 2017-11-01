@@ -279,7 +279,7 @@
   margin-bottom: 1px;
 }
 
-.instrument-label:hover, .sound-byte-visual:hover {
+.instrument-label:hover, .sound-byte-visual:hover, #delete-recording:hover {
   cursor: pointer;
 }
 
@@ -377,4 +377,13 @@
 
 .selected-recording {
   background-color: orange !important;
+}
+
+.record-button {
+}
+
+#delete-recording {
+  height: 100%;
+  width: 14%;
+  background-color: green;
 }
