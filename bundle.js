@@ -855,6 +855,10 @@ var _linked_list = __webpack_require__(0);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
+var _sound_byte = __webpack_require__(10);
+
+var _sound_byte2 = _interopRequireDefault(_sound_byte);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -887,12 +891,12 @@ var Recording = function (_LinkedList) {
   }
 
   _createClass(Recording, [{
-    key: "startRecording",
+    key: 'startRecording',
     value: function startRecording() {
       this.createSoundByteVisual();
     }
   }, {
-    key: "createSoundByteVisual",
+    key: 'createSoundByteVisual',
     value: function createSoundByteVisual() {
       var soundByteContainer = this.selectedInstrument.soundByteContainer;
       var recording = this.createVisual();
@@ -900,46 +904,46 @@ var Recording = function (_LinkedList) {
       soundByteContainer.append(recording);
     }
   }, {
-    key: "expandCurrentRecording",
+    key: 'expandCurrentRecording',
     value: function expandCurrentRecording() {
       var newWidth = this.visual.width() + 1;
       this.visual.css("width", newWidth);
     }
   }, {
-    key: "retrieveVisualId",
+    key: 'retrieveVisualId',
     value: function retrieveVisualId() {
       var _selectedInstrument = this.selectedInstrument,
           id = _selectedInstrument.id,
           instrumentType = _selectedInstrument.instrumentType;
 
-      return instrumentType + "-" + id + "-" + this.startTime;
+      return instrumentType + '-' + id + '-' + this.startTime;
     }
   }, {
-    key: "createVisual",
+    key: 'createVisual',
     value: function createVisual() {
       var startPosition = this.updateStartPosition();
       this.visual = $("<div/>", {
         id: this.id,
         class: "sound-byte-visual"
       });
-      this.visual.css({ left: "" + startPosition });
+      this.visual.css({ left: '' + startPosition });
       return this.visual;
     }
   }, {
-    key: "updateStartPosition",
+    key: 'updateStartPosition',
     value: function updateStartPosition() {
       var pixels = this.startTime * 10;
-      return pixels + "px";
+      return pixels + 'px';
     }
   }, {
-    key: "endCurrentRecording",
+    key: 'endCurrentRecording',
     value: function endCurrentRecording() {
       this.visual.css({ backgroundColor: "#84DAA1" });
       this.endTime = this.timer.totalElapsedTime;
       this.timer.currentRecording = null;
     }
   }, {
-    key: "mapRecordingToKeys",
+    key: 'mapRecordingToKeys',
     value: function mapRecordingToKeys() {
       var _this2 = this;
 
@@ -952,12 +956,12 @@ var Recording = function (_LinkedList) {
       });
     }
   }, {
-    key: "addRecordingListeners",
+    key: 'addRecordingListeners',
     value: function addRecordingListeners() {
       this.clickToSelect();
     }
   }, {
-    key: "clickToSelect",
+    key: 'clickToSelect',
     value: function clickToSelect() {
       var toggleSelected = this.toggleSelected.bind(this);
       this.visual.on("click", function () {
@@ -965,7 +969,7 @@ var Recording = function (_LinkedList) {
       });
     }
   }, {
-    key: "toggleSelected",
+    key: 'toggleSelected',
     value: function toggleSelected() {
       var recordingSuite = this.recordingSuite;
       var selectedRecording = recordingSuite.selectedRecording;
@@ -980,7 +984,7 @@ var Recording = function (_LinkedList) {
       }
     }
   }, {
-    key: "setRecordingStartPos",
+    key: 'setRecordingStartPos',
     value: function setRecordingStartPos(pos) {
       var originalStartTime = this.startTime;
       var recordingLength = this.endTime - this.startTime;
@@ -992,21 +996,21 @@ var Recording = function (_LinkedList) {
       this.updateAllSoundBytePositions(originalStartTime, offset);
     }
   }, {
-    key: "updateAllSoundBytePositions",
+    key: 'updateAllSoundBytePositions',
     value: function updateAllSoundBytePositions(originalStartTime, offset) {
       this.updateAllSoundBytes(originalStartTime, null, function (soundByte) {
-        soundByte.updateStartPosition(offset);
+        soundByte.updateStartEndPosition(offset);
       });
     }
   }, {
-    key: "removeAllSoundBytePositionVisuals",
+    key: 'removeAllSoundBytePositionVisuals',
     value: function removeAllSoundBytePositionVisuals() {
       this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
         soundByte.removeVisual();
       });
     }
   }, {
-    key: "addAllSoundBytePositions",
+    key: 'addAllSoundBytePositions',
     value: function addAllSoundBytePositions() {
       var recording = this;
       this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
@@ -1015,12 +1019,12 @@ var Recording = function (_LinkedList) {
       });
     }
   }, {
-    key: "deleteVisual",
+    key: 'deleteVisual',
     value: function deleteVisual() {
       this.visual.remove();
     }
   }, {
-    key: "resizeRecording",
+    key: 'resizeRecording',
     value: function resizeRecording() {
       var recordingLength = this.endTime - this.startTime;
       var width = recordingLength * 10;
@@ -1029,6 +1033,20 @@ var Recording = function (_LinkedList) {
 
       this.addAllSoundBytePositions();
       this.updateAllSoundBytePositions(this.startTime, 0);
+    }
+  }, {
+    key: 'dupSoundBytes',
+    value: function dupSoundBytes(newRecording) {
+      var newSoundBytes = [];
+
+      this.updateAllSoundBytes(this.startTime, null, function (soundByte) {
+        var dup = new _sound_byte2.default(soundByte.key, newRecording);
+        dup.startTime = soundByte.startTime;
+        dup.endTime = soundByte.endTime;
+        dup.updateStartEndPosition(0);
+        newSoundBytes.push(dup);
+      });
+      return newSoundBytes;
     }
   }]);
 
@@ -1064,6 +1082,7 @@ var RecordingSuite = function () {
 
     this.recordings = [];
     this.selectedRecording = null;
+    this.copiedRecording = null;
     this.addRecordSuiteListeners();
   }
 
@@ -1083,6 +1102,7 @@ var RecordingSuite = function () {
           _this.recordings.splice(recordingIdx, 1);
           _this.selectedRecording.deleteVisual();
           _this.selectedRecording = null;
+          _this.copiedRecording = null;
         }
       });
     }
@@ -1113,10 +1133,60 @@ var RecordingSuite = function () {
       });
     }
   }, {
+    key: "copyRecording",
+    value: function copyRecording() {
+      var _this3 = this;
+
+      $("#copy-recording").on("click", function () {
+        var selectedRecording = _this3.selectedRecording;
+
+        if (selectedRecording) {
+          var timer = selectedRecording.timer,
+              dashboard = selectedRecording.dashboard,
+              startTime = selectedRecording.startTime,
+              endTime = selectedRecording.endTime,
+              nodes = selectedRecording.nodes;
+
+          var copiedRecording = new _recording2.default(dashboard, startTime);
+          var copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
+
+          copiedRecording.endTime = endTime;
+          _this3.copiedRecording = copiedRecording;
+
+          selectedRecording.visual.addClass("copied-recording");
+        }
+      });
+    }
+  }, {
+    key: "pasteRecording",
+    value: function pasteRecording() {
+      var _this4 = this;
+
+      $("#paste-recording").on("click", function () {
+        var selectedRecording = _this4.selectedRecording,
+            copiedRecording = _this4.copiedRecording,
+            recordings = _this4.recordings;
+
+
+        if (selectedRecording && copiedRecording) {
+          var timer = selectedRecording.timer;
+
+
+          recordings.push(copiedRecording);
+          copiedRecording.resizeRecording();
+          copiedRecording.setRecordingStartPos(timer.totalElapsedTime * 10);
+          _this4.copiedRecording = null;
+          selectedRecording.visual.removeClass("copied-recording");
+        }
+      });
+    }
+  }, {
     key: "addRecordSuiteListeners",
     value: function addRecordSuiteListeners() {
       this.deleteRecording();
       this.splitRecording();
+      this.copyRecording();
+      this.pasteRecording();
     }
   }]);
 
@@ -1185,15 +1255,15 @@ var SoundByte = function (_Node) {
       this.getYPos();
     }
   }, {
-    key: "updateStartPosition",
-    value: function updateStartPosition(offset) {
+    key: "updateStartEndPosition",
+    value: function updateStartEndPosition(offset) {
       this.startTime = this.startTime + offset;
       this.endTime = this.endTime + offset;
 
       this.getStartPositions();
 
       this.endXPos = (this.endTime - this.recording.startTime) * 10;
-      this.note.css("left", this.startXPos);
+      if (this.note) this.note.css("left", this.startXPos);
     }
   }, {
     key: "removeVisual",

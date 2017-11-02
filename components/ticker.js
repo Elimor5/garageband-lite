@@ -81,7 +81,7 @@ class Ticker {
   addEventListener() {
     const ticker = $("#timer-ticker");
     let { setCurrentTime, cursor, clearTimer, updateTimeVariables, pauseTimer } = this.timer;
-    
+
     let { recordingSuite } = this.dashboard;
     setCurrentTime = setCurrentTime.bind(this.timer);
     clearTimer = clearTimer.bind(this.timer);
@@ -97,7 +97,7 @@ class Ticker {
       updateTimeVariables(offset);
       setCurrentTime();
       pauseTimer();
-
+    
       if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
 
       cursor.seek(offset);

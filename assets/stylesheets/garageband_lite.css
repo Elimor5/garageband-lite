@@ -279,7 +279,13 @@
   margin-bottom: 1px;
 }
 
-.instrument-label:hover, .sound-byte-visual:hover, #split-recording:hover, #delete-recording:hover {
+.instrument-label:hover,
+.sound-byte-visual:hover,
+ #split-recording:hover,
+ #delete-recording:hover,
+ #copy-recording:hover,
+ #paste-recording:hover
+  {
   cursor: pointer;
 }
 
@@ -348,7 +354,7 @@
   height: 100%;
   width: 0px;
   position: absolute;
-  border-radius: 21px;
+  border-radius: 14px;
   background-color: #FF7F7F;
 }
 
@@ -383,15 +389,30 @@
   display: flex;
 }
 
-
-
 #split-recording {
   height: 100%;
   width: 14%;
   background-color: maroon;
 }
+
 #delete-recording {
   height: 100%;
   width: 14%;
   background-color: green;
+}
+
+#copy-recording {
+  height: 100%;
+  width: 14%;
+  background-color: crimson;
+}
+
+#paste-recording {
+  height: 100%;
+  width: 14%;
+  background-color: purple;
+}
+
+.copied-recording {
+  border: 2px dashed white;
 }

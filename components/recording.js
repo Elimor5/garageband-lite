@@ -1,4 +1,5 @@
 import LinkedList from './linked_list';
+import SoundByte from './sound_byte';
 
 export default class Recording extends LinkedList {
   constructor(dashboard, startTime) {
@@ -106,7 +107,7 @@ export default class Recording extends LinkedList {
 
   updateAllSoundBytePositions(originalStartTime, offset) {
     this.updateAllSoundBytes(originalStartTime, null, (soundByte) => {
-      soundByte.updateStartPosition(offset);
+      soundByte.updateStartEndPosition(offset);
     });
   }
 
@@ -137,4 +138,18 @@ export default class Recording extends LinkedList {
     this.addAllSoundBytePositions();
     this.updateAllSoundBytePositions(this.startTime, 0);
   }
+
+  dupSoundBytes(newRecording) {
+    const newSoundBytes = [];
+
+    this.updateAllSoundBytes(this.startTime, null, (soundByte) => {
+      const dup = new SoundByte(soundByte.key, newRecording);
+      dup.startTime = soundByte.startTime;
+      dup.endTime = soundByte.endTime;
+      dup.updateStartEndPosition(0);
+      newSoundBytes.push(dup);
+    });
+    return newSoundBytes;
+  }
+
 }

@@ -26,14 +26,14 @@ export default class SoundByte extends Node {
     this.getYPos();
   }
 
-  updateStartPosition(offset) {
+  updateStartEndPosition(offset) {
     this.startTime = this.startTime + offset;
     this.endTime = this.endTime + offset;
 
     this.getStartPositions();
 
     this.endXPos = (this.endTime - this.recording.startTime) * 10;
-    this.note.css("left", this.startXPos);
+    if (this.note) this.note.css("left", this.startXPos);
   }
 
   removeVisual() {
