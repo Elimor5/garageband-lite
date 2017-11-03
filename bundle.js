@@ -1236,7 +1236,8 @@ var Key = function () {
       this.soundFileMissing = false;
 
       this.sound = new Audio(url);
-
+      if (instrument === 'violin') this.sound.volume = 0.1;
+      // debugger
       var key = this;
       this.sound.onerror = function (err) {
         key.soundFileMissing = true;

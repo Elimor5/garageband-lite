@@ -75,9 +75,10 @@ class Key {
     const octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
     const url = `assets/${instrument}_samples/${octave}${note}${sharp}.mp3`;
     this.soundFileMissing = false;
-    
-    this.sound = new Audio (url);
 
+    this.sound = new Audio (url);
+    if (instrument === 'violin') this.sound.volume = 0.1;
+    // debugger
     const key = this;
     this.sound.onerror = (err) => {
       key.soundFileMissing = true;
