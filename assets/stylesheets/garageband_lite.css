@@ -14,13 +14,14 @@
 #music-dashboard {
   display: flex;
   flex-direction: column;
+  margin-top: 1%;
 }
 
 #timer-dashboard {
-  height: 29%;
-  width: 20%;
-  align-self: flex-end;
-  background-color: #03A9F4;
+  height: 13%;
+  width: 90%;
+  align-self: center;
+  background-color: #1d1717;
   color: white;
 }
 
@@ -125,14 +126,15 @@
 
 #timer-dashboard {
   display: flex;
-  flex-direction: column;
-  align-content: center;
+  flex-direction: row;
+  /* align-content: center; */
   justify-content: center;
 }
 
 #timer-holder {
   display: flex;
   justify-content: center;
+  width: 33%;
 }
 
 .timer-heading {
@@ -144,6 +146,7 @@
 
 #timer-buttons {
   display: flex;
+  width: 33%;
 }
 
 .timer-button {
@@ -195,8 +198,6 @@
   justify-content: center;
   height: 73%;
   width: 100%;
-  margin-top: 5px;
-
 }
 
 .instrument-selector {
@@ -228,7 +229,7 @@
   flex-direction: column;
   position: relative;
   overflow: scroll;
-  border-radius: 11px;
+  border-radius: 0px 0px 11px 11px;
 }
 
 
@@ -252,6 +253,8 @@
   position: absolute;
   background-color: black;
   display: flex;
+  z-index: 13;
+  border-radius: 26px;
 }
 
 .piano-image {
@@ -259,6 +262,8 @@
   background-size: contain;
   height: 100%;
   width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .violin-image {
@@ -272,8 +277,9 @@
 .modal-image {
   display: none;
   background-size: 100%;
-  height: 90px;
-  width: 90px;
+  height: 150px;
+  width: 150px;
+  border-radius: 15px;
 }
 
 .modal-image:hover {
@@ -398,6 +404,7 @@
 
 #recording-buttons {
   display: flex;
+  width: 33%;
 }
 
 #split-recording {

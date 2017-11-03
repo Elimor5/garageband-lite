@@ -26,8 +26,8 @@ class InstrumentsModal {
 
     modal.addClass("instruments-modal-open");
     modal.animate({
-      height: "29%",
-      width: "17%",
+      height: "300px",
+      width: "300px",
       top: "53%",
       left: "3%",
     });
