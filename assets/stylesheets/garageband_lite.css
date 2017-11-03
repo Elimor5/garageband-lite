@@ -213,6 +213,7 @@
   width: 100%;
   align-self: flex-end;
   background-color: red;
+  border-radius: 5px;
   line-height: 9px;
 }
 
@@ -227,6 +228,7 @@
   flex-direction: column;
   position: relative;
   overflow: scroll;
+  border-radius: 11px;
 }
 
 
@@ -298,6 +300,7 @@
 
 .instruments-container {
   height: 90%;
+  border-radius: 27px;
 }
 
 .sound-byte-container {
@@ -328,11 +331,12 @@
 .timer-ticker-background {
   height: 20px;
   width: 100%;
-  background-color: gray;
+  background-color: #444444;
+  border-radius: 6px;
 }
 
 #timer-ticker {
-  background-color: gray;
+  background-color: #444444;
   position: relative;
   border-radius: 2px;
   height: 20px;
@@ -422,4 +426,19 @@
 
 .copied-recording {
   border: 2px dashed white;
+}
+
+.sound-bytes::-webkit-scrollbar {
+    width: 0em;
+    border-radius: 20px;
+}
+
+.sound-bytes::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+.sound-bytes::-webkit-scrollbar-thumb {
+  background-color: #444444;
+  outline: 1px solid slategrey;
+  border-radius: 20px;
 }
