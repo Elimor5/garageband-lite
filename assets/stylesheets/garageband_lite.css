@@ -248,12 +248,19 @@
 
 .instruments-modal-open {
   position: absolute;
-  background-color: white;
-  display: block;
+  background-color: black;
+  display: flex;
 }
 
 .piano-image {
   background-image: url(../instruments_images/piano_image.png);
+  background-size: contain;
+  height: 100%;
+  width: 100%;
+}
+
+.violin-image {
+  background-image: url(../instruments_images/violin_image.png);
   background-size: contain;
   height: 100%;
   width: 100%;

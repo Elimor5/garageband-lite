@@ -267,595 +267,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _timer = __webpack_require__(12);
-
-var _timer2 = _interopRequireDefault(_timer);
-
-var _instrument = __webpack_require__(5);
-
-var _instrument2 = _interopRequireDefault(_instrument);
-
-var _instruments_modal = __webpack_require__(6);
-
-var _instruments_modal2 = _interopRequireDefault(_instruments_modal);
-
-var _ticker = __webpack_require__(11);
-
-var _ticker2 = _interopRequireDefault(_ticker);
-
-var _recording_suite = __webpack_require__(9);
-
-var _recording_suite2 = _interopRequireDefault(_recording_suite);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Dashboard = function () {
-  function Dashboard(keyboard) {
-    _classCallCheck(this, Dashboard);
-
-    this.timer = new _timer2.default(this);
-    this.instruments = [];
-    this.modal = new _instruments_modal2.default();
-    this.modal.populateModal(this.addInstrument.bind(this));
-    this.keyboard = keyboard;
-    this.selectedInstrument = null;
-    this.recordingSuite = new _recording_suite2.default();
-    this.ticker = new _ticker2.default(this.timer);
-  }
-
-  _createClass(Dashboard, [{
-    key: 'addInstrument',
-    value: function addInstrument(instrumentType) {
-      var id = this.instruments.length;
-      var newInstrument = new _instrument2.default(id, instrumentType);
-      newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
-
-      this.instruments.push(newInstrument);
-      this.updateKeyboard(instrumentType);
-      this.updateSelectedInstrument(newInstrument);
-    }
-  }, {
-    key: 'updateSelectedInstrument',
-    value: function updateSelectedInstrument(instrument) {
-      var whiteBorder = '1px solid white';
-      var blueBorder = "1px solid #ADD8E6";
-
-      this.clearSelectedBorders(whiteBorder);
-
-      this.selectedInstrument = instrument;
-
-      this.selectedInstrument.instrumentLabel.css({ backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
-      this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
-    }
-  }, {
-    key: 'clearSelectedBorders',
-    value: function clearSelectedBorders(whiteBorder) {
-      if (this.selectedInstrument) {
-        var _selectedInstrument = this.selectedInstrument,
-            instrumentLabel = _selectedInstrument.instrumentLabel,
-            soundByteContainer = _selectedInstrument.soundByteContainer;
-
-
-        instrumentLabel.css({ backgroundColor: '', border: whiteBorder, zIndex: 0 });
-        soundByteContainer.css({ border: whiteBorder, zIndex: 0 });
-      }
-    }
-  }, {
-    key: 'updateKeyboard',
-    value: function updateKeyboard(instrumentType) {
-      this.keyboard.instrument = instrumentType;
-      this.keyboard.updateKeys();
-    }
-  }]);
-
-  return Dashboard;
-}();
-
-exports.default = Dashboard;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _key = __webpack_require__(7);
-
-var _key2 = _interopRequireDefault(_key);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Keyboard = function () {
-  function Keyboard() {
-    _classCallCheck(this, Keyboard);
-
-    this.keys = [];
-    this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'c2', 'd2', 'e2'];
-    this.sharpNotes = ["c", "d", "f", "g", "a", "c2", "d2"];
-
-    this.keyboardChars = "asdfghjkl;".split("");
-    this.sharpChars = "wetyuop".split("");
-    this.instrument = 'piano';
-    this.octave = 3;
-    this.dashboard = null;
-    this.addOctaveListeners();
-  }
-
-  _createClass(Keyboard, [{
-    key: 'populateKeys',
-    value: function populateKeys() {
-      for (var i = 0; i < this.notes.length; i++) {
-        var key = new _key2.default(this.notes[i], this.octave, this.keyboardChars[i]);
-        $("#keyboard").append(key.renderNote());
-        this.keys.push(key);
-
-        this.populateSharpKeys(key.note);
-      }
-    }
-  }, {
-    key: 'populateSharpKeys',
-    value: function populateSharpKeys(note) {
-      if (this.sharpNotes.includes(note)) {
-        var sharpNoteIndex = this.sharpNotes.indexOf(note);
-        var sharpKey = new _key2.default(note + '#', this.octave, this.sharpChars[sharpNoteIndex]);
-        var currentKey = $('#' + note);
-
-        currentKey.append(sharpKey.renderNote("sharp"));
-        this.keys.push(sharpKey);
-        currentKey.addClass('sharp-key-holder');
-      }
-    }
-  }, {
-    key: 'updateKeys',
-    value: function updateKeys() {
-      var _this = this;
-
-      this.keys.forEach(function (key) {
-        key.octave = _this.octave;
-        key.setAudio(_this.instrument);
-      });
-    }
-  }, {
-    key: 'addOctaveListeners',
-    value: function addOctaveListeners() {
-      this.increaseOctaveListener();
-      this.decreaseOctaveListener();
-      this.addOctaveKeyboardListners();
-    }
-  }, {
-    key: 'increaseOctaveListener',
-    value: function increaseOctaveListener() {
-      var _this2 = this;
-
-      $("#octave-increase").on("click", function () {
-        _this2.adjustOctave(-1);
-      });
-    }
-  }, {
-    key: 'decreaseOctaveListener',
-    value: function decreaseOctaveListener() {
-      var _this3 = this;
-
-      $("#octave-decrease").on("click", function () {
-        _this3.adjustOctave(1);
-      });
-    }
-  }, {
-    key: 'addOctaveKeyboardListners',
-    value: function addOctaveKeyboardListners() {
-      var _this4 = this;
-
-      $(document).on("keypress", function (e) {
-        if (e.key === ",") {
-          e.preventDefault();
-          _this4.adjustOctave(-1);
-        } else if (e.key === ".") {
-          e.preventDefault();
-          _this4.adjustOctave(1);
-        }
-      });
-    }
-  }, {
-    key: 'adjustOctave',
-    value: function adjustOctave(num) {
-      var _this5 = this;
-
-      var min = void 0;
-      var max = void 0;
-      var newOctave = this.octave + num;
-
-      if (this.instrument === "piano") {
-        min = 0;
-        max = 5;
-      }
-
-      if (newOctave > min - 1 && newOctave < max + 1) this.octave = newOctave;
-
-      $("#current-octave-heading").text('Current Octave: ' + this.octave);
-      this.keys.forEach(function (key) {
-        key.octave = _this5.octave;
-        key.setAudio(_this5.instrument);
-      });
-    }
-  }]);
-
-  return Keyboard;
-}();
-
-exports.default = Keyboard;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cursor = function () {
-  function Cursor() {
-    _classCallCheck(this, Cursor);
-
-    this.cursor = $('#cursor');
-  }
-
-  _createClass(Cursor, [{
-    key: "run",
-    value: function run(timer) {
-
-      var currentTime = timer.totalElapsedTime * 10;
-
-      var pos = this.cursor.css({ left: currentTime });
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      this.cursor.css({ left: "0px" });
-    }
-  }, {
-    key: "seek",
-    value: function seek(pos) {
-      this.cursor.css({ left: pos });
-    }
-  }]);
-
-  return Cursor;
-}();
-
-exports.default = Cursor;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Instrument = function () {
-  function Instrument(id, instrumentType) {
-    _classCallCheck(this, Instrument);
-
-    this.id = id;
-    this.instrumentType = instrumentType;
-    this.soundByteContainer = "";
-    this.instrumentLabel = "";
-    this.createVisual();
-  }
-
-  _createClass(Instrument, [{
-    key: "createVisual",
-    value: function createVisual() {
-      this.createContainers();
-      this.populateInstrumentSelector();
-      this.populateSoundByteContainer();
-    }
-  }, {
-    key: "createContainers",
-    value: function createContainers() {
-      this.soundByteContainer = $('<div/>', {
-        id: this.instrumentType + "-" + this.id + "-soundByte",
-        class: "sound-byte-container"
-      });
-
-      this.instrumentLabel = $('<div/>', {
-        id: this.instrumentType + "-" + this.id + "-label",
-        class: "instrument-label"
-      });
-    }
-  }, {
-    key: "populateInstrumentSelector",
-    value: function populateInstrumentSelector() {
-      $('.instruments-container').append(this.instrumentLabel);
-
-      this.instrumentLabel.append($('<div/>', {
-        class: "instrument-label-image-container"
-      }));
-
-      $('.instrument-label-image-container').append($('<div/>', {
-        class: this.instrumentType + "-image"
-      }));
-
-      this.instrumentLabel.append($('<div/>', {
-        class: "instrument-label-title-container",
-        id: "instrument-label-title-container-" + this.id
-      }));
-
-      $("#instrument-label-title-container-" + this.id).append($('<div/>', {
-        class: "instrument-label-title",
-        text: this.instrumentType[0].toUpperCase() + this.instrumentType.slice(1)
-      }));
-    }
-  }, {
-    key: "populateSoundByteContainer",
-    value: function populateSoundByteContainer() {
-      $('.sound-bytes-inner').append(this.soundByteContainer);
-    }
-  }, {
-    key: "addInstrument",
-    value: function addInstrument() {
-      $(".instrument-selector");
-    }
-  }, {
-    key: "addEventListener",
-    value: function addEventListener(updateSelectedInstrument) {
-      var _this = this;
-
-      this.instrumentLabel.on("click", function () {
-        updateSelectedInstrument(_this);
-      });
-    }
-  }]);
-
-  return Instrument;
-}();
-
-exports.default = Instrument;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var InstrumentsModal = function () {
-  function InstrumentsModal() {
-    _classCallCheck(this, InstrumentsModal);
-
-    this.instruments = ["piano"];
-    this.instrumentImage = { "piano": './components/piano_image.png' };
-    this.modalOpen = false;
-    this.toggleInstrumentsModal();
-  }
-
-  _createClass(InstrumentsModal, [{
-    key: "populateModal",
-    value: function populateModal(callback) {
-      var _this = this;
-
-      this.instruments.forEach(function (instrument) {
-        var src = _this.instrumentImage[instrument];
-
-        $("#instruments-modal").append("\n        <div class=\"modal-image " + instrument + "-image\">\n        </div>");
-
-        $("." + instrument + "-image").on("click", function () {
-          callback(instrument);
-        });
-      });
-    }
-  }, {
-    key: "openModal",
-    value: function openModal(modal) {
-      $('.dashboard-labels').text("Close Modal");
-      $('.modal-image').css("display", "block");
-      this.modalOpen = true;
-
-      modal.addClass("instruments-modal-open");
-      modal.animate({
-        height: "29%",
-        width: "17%",
-        top: "53%",
-        left: "3%"
-      });
-    }
-  }, {
-    key: "closeModal",
-    value: function closeModal(modal) {
-      $('.dashboard-labels').text("Add Instrument");
-      $('.modal-image').css("display", "none");
-      this.modalOpen = false;
-
-      modal.animate({
-        height: "2%",
-        width: "1%",
-        top: "47%",
-        left: "11%"
-      });
-
-      setTimeout(function () {
-        modal.removeClass("instruments-modal-open");
-      }, 401);
-    }
-  }, {
-    key: "toggleInstrumentsModal",
-    value: function toggleInstrumentsModal() {
-      var _this2 = this;
-
-      $(".dashboard-labels").on("click", function (e) {
-        e.stopPropagation();
-        var modal = $('#instruments-modal');
-
-        if (_this2.modalOpen === false) {
-          _this2.openModal(modal);
-        } else {
-          _this2.closeModal(modal);
-        }
-      });
-    }
-  }]);
-
-  return InstrumentsModal;
-}();
-
-exports.default = InstrumentsModal;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _sound_byte = __webpack_require__(10);
-
-var _sound_byte2 = _interopRequireDefault(_sound_byte);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Key = function () {
-  function Key(note, octave, keyboardChar) {
-    _classCallCheck(this, Key);
-
-    this.note = note;
-    this.octave = octave;
-    this.keyboardChar = keyboardChar;
-    this.setAudio('piano');
-    this.currentRecording = null;
-    this.currentSoundByte = null;
-  }
-
-  _createClass(Key, [{
-    key: 'renderNote',
-    value: function renderNote(sharp) {
-      var sharpkey = sharp ? "sharp-key" : "";
-      var pianoKey = sharp ? "" : "piano-key";
-      this.keyDiv = $('<div id=' + this.note + ' class="' + sharpkey + ' ' + pianoKey + '">\n                        <span class="key-label">' + this.keyboardChar.toUpperCase() + '</span>\n                       </div>');
-      this.addListener(this.keyDiv, "mouse", this.startPlay, this.endPlay);
-      this.addListener($(document), "key", this.startPlay, this.endPlay);
-      return this.keyDiv;
-    }
-  }, {
-    key: 'addListener',
-    value: function addListener(element, listener, startFunc, endFunc) {
-      var _this = this;
-
-      var currentKeyChar = this.keyboardChar;
-      var recording = this.currentRecording;
-
-      startFunc = startFunc.bind(this);
-      endFunc = endFunc.bind(this);
-
-      element.on(listener + 'down', function (e) {
-        e.stopPropagation();
-        if (listener === "mouse" || e.key === currentKeyChar) {
-          if (_this.currentRecording && !_this.currentSoundByte) {
-            _this.currentSoundByte = new _sound_byte2.default(_this, _this.currentRecording);
-          }
-          startFunc();
-        }
-      });
-
-      element.on(listener + 'up', function (e) {
-        e.stopPropagation();
-
-        if (listener === "mouse" || e.key === currentKeyChar) {
-          if (_this.currentRecording) {
-            _this.currentSoundByte.getEndPos();
-            _this.currentSoundByte.drawLine();
-            _this.currentSoundByte = null;
-          }
-
-          endFunc();
-        }
-      });
-    }
-  }, {
-    key: 'startPlay',
-    value: function startPlay() {
-      this.sound.play();
-      this.keyDiv.addClass("opacity");
-    }
-  }, {
-    key: 'endPlay',
-    value: function endPlay() {
-      this.sound.load();
-      this.keyDiv.removeClass("opacity");
-    }
-  }, {
-    key: 'setAudio',
-    value: function setAudio(instrument) {
-      var note = this.note.slice(0, 1).toUpperCase();
-      var sharp = this.note[this.note.length - 1] === "#" ? "s" : "";
-      var octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
-      this.sound = new Audio('assets/' + instrument + '_samples/' + octave + note + sharp + '.mp3');
-    }
-  }]);
-
-  return Key;
-}();
-
-exports.default = Key;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _linked_list = __webpack_require__(0);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
-var _sound_byte = __webpack_require__(10);
+var _sound_byte = __webpack_require__(3);
 
 var _sound_byte2 = _interopRequireDefault(_sound_byte);
 
@@ -1056,147 +472,7 @@ var Recording = function (_LinkedList) {
 exports.default = Recording;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _recording = __webpack_require__(8);
-
-var _recording2 = _interopRequireDefault(_recording);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var RecordingSuite = function () {
-  function RecordingSuite() {
-    _classCallCheck(this, RecordingSuite);
-
-    this.recordings = [];
-    this.selectedRecording = null;
-    this.copiedRecording = null;
-    this.addRecordSuiteListeners();
-  }
-
-  _createClass(RecordingSuite, [{
-    key: "push",
-    value: function push(el) {
-      this.recordings.push(el);
-    }
-  }, {
-    key: "deleteRecording",
-    value: function deleteRecording() {
-      var _this = this;
-
-      $("#delete-recording").on("click", function () {
-        if (_this.selectedRecording) {
-          var recordingIdx = _this.recordings.indexOf(_this.selectedRecording);
-          _this.recordings.splice(recordingIdx, 1);
-          _this.selectedRecording.deleteVisual();
-          _this.selectedRecording = null;
-          _this.copiedRecording = null;
-        }
-      });
-    }
-  }, {
-    key: "splitRecording",
-    value: function splitRecording() {
-      var _this2 = this;
-
-      $("#split-recording").on("click", function () {
-        var selectedRecording = _this2.selectedRecording;
-
-
-        if (selectedRecording) {
-          var timer = selectedRecording.timer,
-              dashboard = selectedRecording.dashboard;
-
-          var time = timer.totalElapsedTime;
-          var newRecording = new _recording2.default(dashboard, time);
-
-          selectedRecording.removeAllSoundBytePositionVisuals();
-
-          selectedRecording.splitNodes(time, newRecording);
-          _this2.recordings.push(newRecording);
-
-          _this2.selectedRecording.resizeRecording();
-          newRecording.resizeRecording();
-        }
-      });
-    }
-  }, {
-    key: "copyRecording",
-    value: function copyRecording() {
-      var _this3 = this;
-
-      $("#copy-recording").on("click", function () {
-        var selectedRecording = _this3.selectedRecording;
-
-        if (selectedRecording) {
-          var timer = selectedRecording.timer,
-              dashboard = selectedRecording.dashboard,
-              startTime = selectedRecording.startTime,
-              endTime = selectedRecording.endTime,
-              nodes = selectedRecording.nodes;
-
-          var copiedRecording = new _recording2.default(dashboard, startTime);
-          var copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
-
-          copiedRecording.endTime = endTime;
-          _this3.copiedRecording = copiedRecording;
-
-          selectedRecording.visual.addClass("copied-recording");
-        }
-      });
-    }
-  }, {
-    key: "pasteRecording",
-    value: function pasteRecording() {
-      var _this4 = this;
-
-      $("#paste-recording").on("click", function () {
-        var selectedRecording = _this4.selectedRecording,
-            copiedRecording = _this4.copiedRecording,
-            recordings = _this4.recordings;
-
-
-        if (selectedRecording && copiedRecording) {
-          var timer = selectedRecording.timer;
-
-
-          recordings.push(copiedRecording);
-          copiedRecording.resizeRecording();
-          copiedRecording.setRecordingStartPos(timer.totalElapsedTime * 10);
-          _this4.copiedRecording = null;
-          selectedRecording.visual.removeClass("copied-recording");
-        }
-      });
-    }
-  }, {
-    key: "addRecordSuiteListeners",
-    value: function addRecordSuiteListeners() {
-      this.deleteRecording();
-      this.splitRecording();
-      this.copyRecording();
-      this.pasteRecording();
-    }
-  }]);
-
-  return RecordingSuite;
-}();
-
-exports.default = RecordingSuite;
-
-/***/ }),
-/* 10 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1345,7 +621,7 @@ var SoundByte = function (_Node) {
         }
 
         setTimeout(function () {
-          _this2.sound.load();
+          if (!_this2.key.soundFileMissing) _this2.sound.load();
           _this2.recording.soundByteQueue.pop();
         }, endPlayTimeOffset);
       }, startPlayTimeOffset);
@@ -1359,7 +635,7 @@ var SoundByte = function (_Node) {
         this.sound.currentTime = seek;
       }
 
-      this.sound.play();
+      if (!this.key.soundFileMissing) this.sound.play();
     }
   }]);
 
@@ -1367,6 +643,762 @@ var SoundByte = function (_Node) {
 }(_node2.default);
 
 exports.default = SoundByte;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _timer = __webpack_require__(12);
+
+var _timer2 = _interopRequireDefault(_timer);
+
+var _instrument = __webpack_require__(7);
+
+var _instrument2 = _interopRequireDefault(_instrument);
+
+var _instruments_modal = __webpack_require__(8);
+
+var _instruments_modal2 = _interopRequireDefault(_instruments_modal);
+
+var _ticker = __webpack_require__(11);
+
+var _ticker2 = _interopRequireDefault(_ticker);
+
+var _recording_suite = __webpack_require__(10);
+
+var _recording_suite2 = _interopRequireDefault(_recording_suite);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Dashboard = function () {
+  function Dashboard(keyboard) {
+    _classCallCheck(this, Dashboard);
+
+    this.timer = new _timer2.default(this);
+    this.instruments = [];
+    this.modal = new _instruments_modal2.default();
+    this.modal.populateModal(this.addInstrument.bind(this));
+    this.keyboard = keyboard;
+    this.selectedInstrument = null;
+    this.recordingSuite = new _recording_suite2.default();
+    this.ticker = new _ticker2.default(this.timer);
+  }
+
+  _createClass(Dashboard, [{
+    key: 'addInstrument',
+    value: function addInstrument(instrumentType) {
+      var id = this.instruments.length;
+      var newInstrument = new _instrument2.default(id, instrumentType);
+      newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
+
+      this.instruments.push(newInstrument);
+      this.updateKeyboard(instrumentType);
+      this.updateSelectedInstrument(newInstrument);
+    }
+  }, {
+    key: 'updateSelectedInstrument',
+    value: function updateSelectedInstrument(instrument) {
+      var whiteBorder = '1px solid white';
+      var blueBorder = "1px solid #ADD8E6";
+
+      this.clearSelectedBorders(whiteBorder);
+
+      this.selectedInstrument = instrument;
+
+      this.updateKeyboard(instrument.instrumentType);
+
+      this.selectedInstrument.instrumentLabel.css({ backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
+      this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
+    }
+  }, {
+    key: 'clearSelectedBorders',
+    value: function clearSelectedBorders(whiteBorder) {
+      if (this.selectedInstrument) {
+        var _selectedInstrument = this.selectedInstrument,
+            instrumentLabel = _selectedInstrument.instrumentLabel,
+            soundByteContainer = _selectedInstrument.soundByteContainer;
+
+
+        instrumentLabel.css({ backgroundColor: '', border: whiteBorder, zIndex: 0 });
+        soundByteContainer.css({ border: whiteBorder, zIndex: 0 });
+      }
+    }
+  }, {
+    key: 'updateKeyboard',
+    value: function updateKeyboard(instrumentType) {
+      this.keyboard.instrument = instrumentType;
+      this.keyboard.updateKeys();
+    }
+  }]);
+
+  return Dashboard;
+}();
+
+exports.default = Dashboard;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _key = __webpack_require__(9);
+
+var _key2 = _interopRequireDefault(_key);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Keyboard = function () {
+  function Keyboard() {
+    _classCallCheck(this, Keyboard);
+
+    this.keys = [];
+    this.notes = ['c', 'd', 'e', 'f', 'g', 'a', 'b', 'c2', 'd2', 'e2'];
+    this.sharpNotes = ["c", "d", "f", "g", "a", "c2", "d2"];
+
+    this.keyboardChars = "asdfghjkl;".split("");
+    this.sharpChars = "wetyuop".split("");
+    this.instrument = 'piano';
+    this.octave = 3;
+    this.dashboard = null;
+    this.addOctaveListeners();
+  }
+
+  _createClass(Keyboard, [{
+    key: 'populateKeys',
+    value: function populateKeys() {
+      for (var i = 0; i < this.notes.length; i++) {
+        var key = new _key2.default(this.notes[i], this.octave, this.keyboardChars[i]);
+        $("#keyboard").append(key.renderNote());
+        this.keys.push(key);
+
+        this.populateSharpKeys(key.note);
+      }
+    }
+  }, {
+    key: 'populateSharpKeys',
+    value: function populateSharpKeys(note) {
+      if (this.sharpNotes.includes(note)) {
+        var sharpNoteIndex = this.sharpNotes.indexOf(note);
+        var sharpKey = new _key2.default(note + '#', this.octave, this.sharpChars[sharpNoteIndex]);
+        var currentKey = $('#' + note);
+
+        currentKey.append(sharpKey.renderNote("sharp"));
+        this.keys.push(sharpKey);
+        currentKey.addClass('sharp-key-holder');
+      }
+    }
+  }, {
+    key: 'updateKeys',
+    value: function updateKeys() {
+      var _this = this;
+
+      this.keys.forEach(function (key) {
+        key.octave = _this.octave;
+        key.setAudio(_this.instrument);
+      });
+    }
+  }, {
+    key: 'addOctaveListeners',
+    value: function addOctaveListeners() {
+      this.increaseOctaveListener();
+      this.decreaseOctaveListener();
+      this.addOctaveKeyboardListners();
+    }
+  }, {
+    key: 'increaseOctaveListener',
+    value: function increaseOctaveListener() {
+      var _this2 = this;
+
+      $("#octave-increase").on("click", function () {
+        _this2.adjustOctave(-1);
+      });
+    }
+  }, {
+    key: 'decreaseOctaveListener',
+    value: function decreaseOctaveListener() {
+      var _this3 = this;
+
+      $("#octave-decrease").on("click", function () {
+        _this3.adjustOctave(1);
+      });
+    }
+  }, {
+    key: 'addOctaveKeyboardListners',
+    value: function addOctaveKeyboardListners() {
+      var _this4 = this;
+
+      $(document).on("keypress", function (e) {
+        if (e.key === ",") {
+          e.preventDefault();
+          _this4.adjustOctave(-1);
+        } else if (e.key === ".") {
+          e.preventDefault();
+          _this4.adjustOctave(1);
+        }
+      });
+    }
+  }, {
+    key: 'adjustOctave',
+    value: function adjustOctave(num) {
+      var _this5 = this;
+
+      var min = void 0;
+      var max = void 0;
+      var newOctave = this.octave + num;
+
+      if (this.instrument === "piano") {} else if (this.instrument) switch (this.instrument) {
+        case "piano":
+          min = 0;
+          max = 5;
+          break;
+        case "violin":
+          min = 2;
+          max = 5;
+          break;
+        default:
+          min = 0;
+          max = 5;
+      }
+
+      if (newOctave > min - 1 && newOctave < max + 1) this.octave = newOctave;
+
+      $("#current-octave-heading").text('Current Octave: ' + this.octave);
+      this.keys.forEach(function (key) {
+        key.octave = _this5.octave;
+        key.setAudio(_this5.instrument);
+      });
+    }
+  }]);
+
+  return Keyboard;
+}();
+
+exports.default = Keyboard;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cursor = function () {
+  function Cursor() {
+    _classCallCheck(this, Cursor);
+
+    this.cursor = $('#cursor');
+  }
+
+  _createClass(Cursor, [{
+    key: "run",
+    value: function run(timer) {
+
+      var currentTime = timer.totalElapsedTime * 10;
+
+      var pos = this.cursor.css({ left: currentTime });
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.cursor.css({ left: "0px" });
+    }
+  }, {
+    key: "seek",
+    value: function seek(pos) {
+      this.cursor.css({ left: pos });
+    }
+  }]);
+
+  return Cursor;
+}();
+
+exports.default = Cursor;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Instrument = function () {
+  function Instrument(id, instrumentType) {
+    _classCallCheck(this, Instrument);
+
+    this.id = id;
+    this.instrumentType = instrumentType;
+    this.soundByteContainer = "";
+    this.instrumentLabel = "";
+    this.createVisual();
+  }
+
+  _createClass(Instrument, [{
+    key: "createVisual",
+    value: function createVisual() {
+      this.createContainers();
+      this.populateInstrumentSelector();
+      this.populateSoundByteContainer();
+    }
+  }, {
+    key: "createContainers",
+    value: function createContainers() {
+      this.soundByteContainer = $('<div/>', {
+        id: this.instrumentType + "-" + this.id + "-soundByte",
+        class: "sound-byte-container"
+      });
+
+      this.instrumentLabel = $('<div/>', {
+        id: this.instrumentType + "-" + this.id + "-label",
+        class: "instrument-label"
+      });
+    }
+  }, {
+    key: "populateInstrumentSelector",
+    value: function populateInstrumentSelector() {
+      $('.instruments-container').append(this.instrumentLabel);
+
+      this.instrumentLabel.append($('<div/>', {
+        class: "instrument-label-image-container"
+      }));
+
+      $('.instrument-label-image-container').append($('<div/>', {
+        class: this.instrumentType + "-image"
+      }));
+
+      this.instrumentLabel.append($('<div/>', {
+        class: "instrument-label-title-container",
+        id: "instrument-label-title-container-" + this.id
+      }));
+
+      $("#instrument-label-title-container-" + this.id).append($('<div/>', {
+        class: "instrument-label-title",
+        text: this.instrumentType[0].toUpperCase() + this.instrumentType.slice(1)
+      }));
+    }
+  }, {
+    key: "populateSoundByteContainer",
+    value: function populateSoundByteContainer() {
+      $('.sound-bytes-inner').append(this.soundByteContainer);
+    }
+  }, {
+    key: "addInstrument",
+    value: function addInstrument() {
+      $(".instrument-selector");
+    }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener(updateSelectedInstrument) {
+      var _this = this;
+
+      this.instrumentLabel.on("click", function () {
+        updateSelectedInstrument(_this);
+      });
+    }
+  }]);
+
+  return Instrument;
+}();
+
+exports.default = Instrument;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var InstrumentsModal = function () {
+  function InstrumentsModal() {
+    _classCallCheck(this, InstrumentsModal);
+
+    this.instruments = ["piano", "violin"];
+    this.modalOpen = false;
+    this.toggleInstrumentsModal();
+  }
+
+  _createClass(InstrumentsModal, [{
+    key: "populateModal",
+    value: function populateModal(callback) {
+      this.instruments.forEach(function (instrument) {
+        var src = "./components/" + instrument + "_image.png";
+
+        $("#instruments-modal").append("\n        <div class=\"modal-image " + instrument + "-image\">\n        </div>");
+
+        $("." + instrument + "-image").on("click", function () {
+          callback(instrument);
+        });
+      });
+    }
+  }, {
+    key: "openModal",
+    value: function openModal(modal) {
+      $('.dashboard-labels').text("Close Modal");
+      $('.modal-image').css("display", "block");
+      this.modalOpen = true;
+
+      modal.addClass("instruments-modal-open");
+      modal.animate({
+        height: "29%",
+        width: "17%",
+        top: "53%",
+        left: "3%"
+      });
+    }
+  }, {
+    key: "closeModal",
+    value: function closeModal(modal) {
+      $('.dashboard-labels').text("Add Instrument");
+      $('.modal-image').css("display", "none");
+      this.modalOpen = false;
+
+      modal.animate({
+        height: "2%",
+        width: "1%",
+        top: "47%",
+        left: "11%"
+      });
+
+      setTimeout(function () {
+        modal.removeClass("instruments-modal-open");
+      }, 401);
+    }
+  }, {
+    key: "toggleInstrumentsModal",
+    value: function toggleInstrumentsModal() {
+      var _this = this;
+
+      $(".dashboard-labels").on("click", function (e) {
+        e.stopPropagation();
+        var modal = $('#instruments-modal');
+
+        if (_this.modalOpen === false) {
+          _this.openModal(modal);
+        } else {
+          _this.closeModal(modal);
+        }
+      });
+    }
+  }]);
+
+  return InstrumentsModal;
+}();
+
+exports.default = InstrumentsModal;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _sound_byte = __webpack_require__(3);
+
+var _sound_byte2 = _interopRequireDefault(_sound_byte);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Key = function () {
+  function Key(note, octave, keyboardChar) {
+    _classCallCheck(this, Key);
+
+    this.note = note;
+    this.octave = octave;
+    this.keyboardChar = keyboardChar;
+    this.setAudio('piano');
+    this.currentRecording = null;
+    this.currentSoundByte = null;
+    this.soundFileMissing = false;
+  }
+
+  _createClass(Key, [{
+    key: 'renderNote',
+    value: function renderNote(sharp) {
+      var sharpkey = sharp ? "sharp-key" : "";
+      var pianoKey = sharp ? "" : "piano-key";
+      this.keyDiv = $('<div id=' + this.note + ' class="' + sharpkey + ' ' + pianoKey + '">\n                        <span class="key-label">' + this.keyboardChar.toUpperCase() + '</span>\n                       </div>');
+      this.addListener(this.keyDiv, "mouse", this.startPlay, this.endPlay);
+      this.addListener($(document), "key", this.startPlay, this.endPlay);
+      return this.keyDiv;
+    }
+  }, {
+    key: 'addListener',
+    value: function addListener(element, listener, startFunc, endFunc) {
+      var _this = this;
+
+      var currentKeyChar = this.keyboardChar;
+      var recording = this.currentRecording;
+
+      startFunc = startFunc.bind(this);
+      endFunc = endFunc.bind(this);
+
+      element.on(listener + 'down', function (e) {
+        e.stopPropagation();
+        if (listener === "mouse" || e.key === currentKeyChar) {
+          if (_this.currentRecording && !_this.currentSoundByte && !_this.soundFileMissing) {
+            _this.currentSoundByte = new _sound_byte2.default(_this, _this.currentRecording);
+          }
+          startFunc();
+        }
+      });
+
+      element.on(listener + 'up', function (e) {
+        e.stopPropagation();
+
+        if (listener === "mouse" || e.key === currentKeyChar) {
+          if (_this.currentRecording && !_this.soundFileMissing) {
+            _this.currentSoundByte.getEndPos();
+            _this.currentSoundByte.drawLine();
+            _this.currentSoundByte = null;
+          }
+
+          endFunc();
+        }
+      });
+    }
+  }, {
+    key: 'startPlay',
+    value: function startPlay() {
+      if (!this.soundFileMissing) {
+        this.sound.play();
+        this.keyDiv.addClass("opacity");
+      }
+    }
+  }, {
+    key: 'endPlay',
+    value: function endPlay() {
+      if (!this.soundFileMissing) {
+        this.sound.load();
+        this.keyDiv.removeClass("opacity");
+      }
+    }
+  }, {
+    key: 'setAudio',
+    value: function setAudio(instrument) {
+      var note = this.note.slice(0, 1).toUpperCase();
+      var sharp = this.note[this.note.length - 1] === "#" ? "s" : "";
+      var octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
+      var url = 'assets/' + instrument + '_samples/' + octave + note + sharp + '.mp3';
+      this.soundFileMissing = false;
+
+      this.sound = new Audio(url);
+
+      var key = this;
+      this.sound.onerror = function (err) {
+        key.soundFileMissing = true;
+      };
+    }
+  }]);
+
+  return Key;
+}();
+
+exports.default = Key;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _recording = __webpack_require__(2);
+
+var _recording2 = _interopRequireDefault(_recording);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RecordingSuite = function () {
+  function RecordingSuite() {
+    _classCallCheck(this, RecordingSuite);
+
+    this.recordings = [];
+    this.selectedRecording = null;
+    this.copiedRecording = null;
+    this.addRecordSuiteListeners();
+  }
+
+  _createClass(RecordingSuite, [{
+    key: "push",
+    value: function push(el) {
+      this.recordings.push(el);
+    }
+  }, {
+    key: "deleteRecordingListener",
+    value: function deleteRecordingListener() {
+      var _this = this;
+
+      $("#delete-recording").on("click", function () {
+        if (_this.selectedRecording) {
+          var recordingIdx = _this.recordings.indexOf(_this.selectedRecording);
+          _this.recordings.splice(recordingIdx, 1);
+          _this.selectedRecording.deleteVisual();
+          _this.selectedRecording = null;
+          _this.copiedRecording = null;
+        }
+      });
+    }
+  }, {
+    key: "splitRecordingListener",
+    value: function splitRecordingListener() {
+      var _this2 = this;
+
+      $("#split-recording").on("click", function () {
+        var selectedRecording = _this2.selectedRecording;
+
+
+        if (selectedRecording) {
+          var timer = selectedRecording.timer,
+              dashboard = selectedRecording.dashboard;
+
+          var time = timer.totalElapsedTime;
+          var newRecording = new _recording2.default(dashboard, time);
+
+          selectedRecording.removeAllSoundBytePositionVisuals();
+
+          selectedRecording.splitNodes(time, newRecording);
+          _this2.recordings.push(newRecording);
+
+          _this2.selectedRecording.resizeRecording();
+          newRecording.resizeRecording();
+        }
+      });
+    }
+  }, {
+    key: "copyRecordingListener",
+    value: function copyRecordingListener() {
+      var _this3 = this;
+
+      $("#copy-recording").on("click", function () {
+        var selectedRecording = _this3.selectedRecording;
+
+        if (selectedRecording) {
+          var copiedRecording = _this3.copyRecording(selectedRecording);
+          _this3.copiedRecording = copiedRecording;
+
+          selectedRecording.visual.addClass("copied-recording");
+        }
+      });
+    }
+  }, {
+    key: "pasteRecordingListener",
+    value: function pasteRecordingListener() {
+      var _this4 = this;
+
+      $("#paste-recording").on("click", function () {
+        var selectedRecording = _this4.selectedRecording,
+            copiedRecording = _this4.copiedRecording,
+            recordings = _this4.recordings;
+
+
+        if (selectedRecording && copiedRecording) {
+          var timer = selectedRecording.timer;
+
+
+          recordings.push(copiedRecording);
+          _this4.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
+          _this4.copiedRecording = null;
+          selectedRecording.visual.removeClass("copied-recording");
+        }
+      });
+    }
+  }, {
+    key: "copyRecording",
+    value: function copyRecording(selectedRecording) {
+      var timer = selectedRecording.timer,
+          dashboard = selectedRecording.dashboard,
+          startTime = selectedRecording.startTime,
+          endTime = selectedRecording.endTime,
+          nodes = selectedRecording.nodes;
+
+      var copiedRecording = new _recording2.default(dashboard, startTime);
+      var copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
+
+      copiedRecording.endTime = endTime;
+      return copiedRecording;
+    }
+  }, {
+    key: "pasteRecording",
+    value: function pasteRecording(copiedRecording, time) {
+      copiedRecording.resizeRecording();
+      copiedRecording.setRecordingStartPos(time);
+    }
+  }, {
+    key: "addRecordSuiteListeners",
+    value: function addRecordSuiteListeners() {
+      this.deleteRecordingListener();
+      this.splitRecordingListener();
+      this.copyRecordingListener();
+      this.pasteRecordingListener();
+    }
+  }]);
+
+  return RecordingSuite;
+}();
+
+exports.default = RecordingSuite;
 
 /***/ }),
 /* 11 */
@@ -1533,11 +1565,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _cursor = __webpack_require__(4);
+var _cursor = __webpack_require__(6);
 
 var _cursor2 = _interopRequireDefault(_cursor);
 
-var _recording = __webpack_require__(8);
+var _recording = __webpack_require__(2);
 
 var _recording2 = _interopRequireDefault(_recording);
 
@@ -1826,7 +1858,7 @@ exports.default = Timer;
 "use strict";
 
 
-var _keyboard = __webpack_require__(3);
+var _keyboard = __webpack_require__(5);
 
 var _keyboard2 = _interopRequireDefault(_keyboard);
 
@@ -1834,7 +1866,7 @@ var _linked_list = __webpack_require__(0);
 
 var _linked_list2 = _interopRequireDefault(_linked_list);
 
-var _Dashboard = __webpack_require__(2);
+var _Dashboard = __webpack_require__(4);
 
 var _Dashboard2 = _interopRequireDefault(_Dashboard);
 

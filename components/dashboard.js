@@ -35,6 +35,8 @@ class Dashboard {
 
     this.selectedInstrument = instrument;
 
+    this.updateKeyboard(instrument.instrumentType);
+
     this.selectedInstrument.instrumentLabel.css({backgroundColor: "#ADD8E6", border: blueBorder, zIndex: 1 });
     this.selectedInstrument.soundByteContainer.css({ border: blueBorder, zIndex: 1 });
   }

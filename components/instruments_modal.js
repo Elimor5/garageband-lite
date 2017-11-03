@@ -1,14 +1,13 @@
 class InstrumentsModal {
   constructor() {
-    this.instruments = ["piano"];
-    this.instrumentImage = {"piano": './components/piano_image.png'};
+    this.instruments = ["piano", "violin"];
     this.modalOpen = false;
     this.toggleInstrumentsModal();
   }
 
   populateModal(callback){
     this.instruments.forEach((instrument) => {
-      let src = this.instrumentImage[instrument];
+      let src = `./components/${instrument}_image.png`;
 
       $("#instruments-modal").append(`
         <div class="modal-image ${instrument}-image">

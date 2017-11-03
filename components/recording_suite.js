@@ -12,7 +12,7 @@ export default class RecordingSuite {
     this.recordings.push(el);
   }
 
-  deleteRecording() {
+  deleteRecordingListener() {
     $("#delete-recording").on("click",() => {
       if (this.selectedRecording) {
         const recordingIdx = this.recordings.indexOf(this.selectedRecording);
@@ -24,7 +24,7 @@ export default class RecordingSuite {
     });
   }
 
-  splitRecording() {
+  splitRecordingListener() {
     $("#split-recording").on("click", () => {
       const { selectedRecording } = this;
 
@@ -45,15 +45,11 @@ export default class RecordingSuite {
     });
   }
 
-  copyRecording() {
+  copyRecordingListener() {
     $("#copy-recording").on("click",() => {
       const { selectedRecording } = this;
       if (selectedRecording) {
-        const { timer, dashboard, startTime, endTime, nodes } = selectedRecording;
-        const copiedRecording = new Recording(dashboard, startTime);
-        const copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
-
-        copiedRecording.endTime = endTime;
+        const copiedRecording = this.copyRecording(selectedRecording);
         this.copiedRecording = copiedRecording;
 
         selectedRecording.visual.addClass("copied-recording");
@@ -61,7 +57,7 @@ export default class RecordingSuite {
     });
   }
 
-  pasteRecording() {
+  pasteRecordingListener() {
     $("#paste-recording").on("click",() => {
 
       const { selectedRecording, copiedRecording, recordings } = this;
@@ -70,18 +66,31 @@ export default class RecordingSuite {
         const { timer } = selectedRecording;
 
         recordings.push(copiedRecording);
-        copiedRecording.resizeRecording();
-        copiedRecording.setRecordingStartPos(timer.totalElapsedTime * 10);
+        this.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
         this.copiedRecording = null;
         selectedRecording.visual.removeClass("copied-recording");
       }
     });
   }
 
+  copyRecording(selectedRecording) {
+    const { timer, dashboard, startTime, endTime, nodes } = selectedRecording;
+    const copiedRecording = new Recording(dashboard, startTime);
+    const copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
+
+    copiedRecording.endTime = endTime;
+    return copiedRecording;
+  }
+
+  pasteRecording(copiedRecording, time) {
+    copiedRecording.resizeRecording();
+    copiedRecording.setRecordingStartPos(time);
+  }
+
   addRecordSuiteListeners() {
-    this.deleteRecording();
-    this.splitRecording();
-    this.copyRecording();
-    this.pasteRecording();
+    this.deleteRecordingListener();
+    this.splitRecordingListener();
+    this.copyRecordingListener();
+    this.pasteRecordingListener();
   }
 }

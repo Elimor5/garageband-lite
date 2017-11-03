@@ -79,8 +79,21 @@ class Keyboard {
     let newOctave = this.octave + num;
 
     if (this.instrument === "piano") {
-      min = 0;
-      max = 5;
+
+    } else if (this.instrument)
+
+    switch (this.instrument) {
+      case "piano":
+        min = 0;
+        max = 5;
+        break;
+      case "violin":
+        min = 2;
+        max = 5;
+        break;
+      default:
+        min = 0;
+        max = 5;
     }
 
     if (newOctave > (min - 1) && newOctave < (max + 1)) this.octave = newOctave ;

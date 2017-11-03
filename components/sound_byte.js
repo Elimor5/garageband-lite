@@ -100,7 +100,7 @@ export default class SoundByte extends Node {
       }
 
       setTimeout(() => {
-        this.sound.load();
+      if (!this.key.soundFileMissing)  this.sound.load();
         this.recording.soundByteQueue.pop();
       }, endPlayTimeOffset);
     }, startPlayTimeOffset);
@@ -114,6 +114,6 @@ export default class SoundByte extends Node {
       this.sound.currentTime = seek;
     }
 
-    this.sound.play();
+  if (!this.key.soundFileMissing)  this.sound.play();
   }
 }

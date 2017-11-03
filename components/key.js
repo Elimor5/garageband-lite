@@ -8,6 +8,7 @@ class Key {
     this.setAudio('piano');
     this.currentRecording = null;
     this.currentSoundByte = null;
+    this.soundFileMissing = false;
   }
 
   renderNote(sharp){
@@ -31,7 +32,7 @@ class Key {
     element.on(`${listener}down`, (e) => {
       e.stopPropagation();
       if (listener === "mouse" || e.key === currentKeyChar) {
-        if (this.currentRecording && !this.currentSoundByte) {
+        if (this.currentRecording && !this.currentSoundByte && !this.soundFileMissing) {
           this.currentSoundByte = new SoundByte(this, this.currentRecording);
         }
         startFunc();
@@ -42,7 +43,7 @@ class Key {
       e.stopPropagation();
 
       if (listener === "mouse" || e.key === currentKeyChar) {
-        if (this.currentRecording) {
+        if (this.currentRecording && !this.soundFileMissing) {
           this.currentSoundByte.getEndPos();
           this.currentSoundByte.drawLine();
           this.currentSoundByte = null;
@@ -55,20 +56,32 @@ class Key {
   }
 
   startPlay() {
-    this.sound.play();
-    this.keyDiv.addClass("opacity");
+    if (!this.soundFileMissing) {
+      this.sound.play();
+      this.keyDiv.addClass("opacity");
+    }
   }
 
   endPlay() {
-    this.sound.load();
-    this.keyDiv.removeClass("opacity");
+    if (!this.soundFileMissing) {
+      this.sound.load();
+      this.keyDiv.removeClass("opacity");
+    }
   }
 
   setAudio(instrument) {
     const note = this.note.slice(0,1).toUpperCase();
     const sharp = (this.note[this.note.length-1] === "#") ? "s" : "";
     const octave = this.note[1] === "2" ? this.octave + 1 : this.octave;
-    this.sound = new Audio (`assets/${instrument}_samples/${octave}${note}${sharp}.mp3`);
+    const url = `assets/${instrument}_samples/${octave}${note}${sharp}.mp3`;
+    this.soundFileMissing = false;
+    
+    this.sound = new Audio (url);
+
+    const key = this;
+    this.sound.onerror = (err) => {
+      key.soundFileMissing = true;
+    };
   }
 }
 export default Key;
