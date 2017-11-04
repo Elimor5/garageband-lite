@@ -1338,6 +1338,7 @@ var RecordingSuite = function () {
         if (selectedRecording) {
           var copiedRecording = _this3.copyRecording(selectedRecording);
           _this3.copiedRecording = copiedRecording;
+          _this3.copiedRecording.original = selectedRecording;
 
           selectedRecording.visual.addClass("copied-recording");
         }
@@ -1354,14 +1355,19 @@ var RecordingSuite = function () {
             recordings = _this4.recordings;
 
 
-        if (selectedRecording && copiedRecording) {
-          var timer = selectedRecording.timer;
+        if (copiedRecording) {
+          var timer = copiedRecording.timer,
+              selectedInstrument = copiedRecording.selectedInstrument,
+              dashboard = copiedRecording.dashboard,
+              original = copiedRecording.original;
 
 
+          dashboard.updateSelectedInstrument(original.selectedInstrument);
+          debugger;
           recordings.push(copiedRecording);
           _this4.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
           _this4.copiedRecording = null;
-          selectedRecording.visual.removeClass("copied-recording");
+          copiedRecording.original.visual.removeClass("copied-recording");
         }
       });
     }

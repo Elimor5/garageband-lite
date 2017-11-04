@@ -146,6 +146,7 @@
 
 #timer-buttons {
   display: flex;
+  justify-content: center;
   width: 33%;
 }
 
@@ -404,6 +405,7 @@
 
 #recording-buttons {
   display: flex;
+  justify-content: center;
   width: 33%;
 }
 

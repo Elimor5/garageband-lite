@@ -51,6 +51,7 @@ export default class RecordingSuite {
       if (selectedRecording) {
         const copiedRecording = this.copyRecording(selectedRecording);
         this.copiedRecording = copiedRecording;
+        this.copiedRecording.original = selectedRecording;
 
         selectedRecording.visual.addClass("copied-recording");
       }
@@ -62,13 +63,15 @@ export default class RecordingSuite {
 
       const { selectedRecording, copiedRecording, recordings } = this;
 
-      if (selectedRecording && copiedRecording) {
-        const { timer } = selectedRecording;
+      if (copiedRecording) {
+        const { timer, selectedInstrument, dashboard, original } = copiedRecording;
 
+        dashboard.updateSelectedInstrument(original.selectedInstrument);
+        debugger
         recordings.push(copiedRecording);
         this.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
         this.copiedRecording = null;
-        selectedRecording.visual.removeClass("copied-recording");
+        copiedRecording.original.visual.removeClass("copied-recording");
       }
     });
   }
