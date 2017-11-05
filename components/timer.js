@@ -185,13 +185,14 @@ class Timer {
   }
 
   startRecording() {
-    const { dashboard } = this;
+    const { dashboard, currentRecording } = this;
     const { instruments } = dashboard;
 
     if (instruments.length === 0) {
       dashboard.addInstrument("piano");
     }
 
+    if (!currentRecording) {
       this.createNewRecording();
 
       if (this.paused) this.paused = false;
@@ -199,7 +200,7 @@ class Timer {
       this.timerRunning = true;
 
       this.playRecordings();
-
+    }
   }
 
   endCurrentRecording() {

@@ -1812,7 +1812,8 @@ var Timer = function () {
   }, {
     key: 'startRecording',
     value: function startRecording() {
-      var dashboard = this.dashboard;
+      var dashboard = this.dashboard,
+          currentRecording = this.currentRecording;
       var instruments = dashboard.instruments;
 
 
@@ -1820,13 +1821,15 @@ var Timer = function () {
         dashboard.addInstrument("piano");
       }
 
-      this.createNewRecording();
+      if (!currentRecording) {
+        this.createNewRecording();
 
-      if (this.paused) this.paused = false;
-      if (!this.timerRunning) this.runTimer();
-      this.timerRunning = true;
+        if (this.paused) this.paused = false;
+        if (!this.timerRunning) this.runTimer();
+        this.timerRunning = true;
 
-      this.playRecordings();
+        this.playRecordings();
+      }
     }
   }, {
     key: 'endCurrentRecording',

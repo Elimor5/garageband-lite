@@ -53,7 +53,6 @@
 }
 
 #octave-increase {
-  /* background: yellow; */
 }
 
 #current-octave {
@@ -61,14 +60,11 @@
 }
 
 #octave-decrease {
-  /* background: pink; */
 }
 
 .octave-toggle-text {
   text-align: center;
   margin-bottom: 3px;
-  /* font-family: 'Orbitron', sans-serif; */
-  /* color: #00FF7F; */
   font-size: 27px;
   line-height: 0px;
 }
@@ -135,7 +131,6 @@
 #timer-dashboard {
   display: flex;
   flex-direction: row;
-  /* align-content: center; */
   justify-content: center;
 }
 
@@ -144,7 +139,6 @@
   justify-content: space-around;
   text-align: center;
   width: 33%;
-  /* background: #34333A; */
   border-radius: 12px;
 }
 
@@ -166,7 +160,6 @@
 .timer-button {
   margin: 4px 4px 4px 4px;
   display: flex;
-  /* background: #444444; */
   height: 50px;
   width: 50px;
   border-radius: 30px;
@@ -181,16 +174,11 @@
 }
 
 #record-button {
-  /* background-image: url("../timer_buttons/record.png"); */
-  /* height: 50px; */
-  /* width: 50px; */
-  /* background-size: contain; */
   color: red;
   font-size: 28px;
 }
 
 #pause-button {
-  /* background-image: url("../timer_buttons/pause.png"); */
   height: 50px;
   width: 50px;
   background-size: contain;
@@ -199,14 +187,11 @@
 
 
 #stop-button {
-  /* background-image: url("../timer_buttons/stop.png"); */
   height: 50px;
   width: 50px;
-  /* background-size: contain; */
 }
 
 #play-button {
-    /* background-image: url("../timer_buttons/play.png"); */
     height: 50px;
     width: 50px;
     background-size: contain;
@@ -265,7 +250,7 @@
 }
 
 .instruments-modal-hidden {
-  display: none
+  display: none;
   height: 2%;
   width: 1%;
   position: absolute;
@@ -295,9 +280,6 @@
   background-size: contain;
   height: 100%;
   width: 100%;
-  /* background-size: contain; */
-  /* height: 100%; */
-  /* width: 100%; */
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -414,10 +396,10 @@
 
 .tick-time {
   position: absolute;
-  top: 2px;
+  top: 0px;
   text-align: center;
   color: white;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .note {
@@ -436,30 +418,6 @@
   justify-content: center;
   width: 33%;
   align-items: center;
-}
-
-#split-recording {
-  /* height: 100%; */
-  /* width: 14%; */
-  /* background-color: maroon; */
-}
-
-#delete-recording {
-  /* height: 100%; */
-  /* width: 14%; */
-  /* background-color: green; */
-}
-
-#copy-recording {
-  /* height: 100%; */
-  /* width: 14%; */
-  /* background-color: crimson; */
-}
-
-#paste-recording {
-  /* height: 100%; */
-  /* width: 14%; */
-  /* background-color: purple; */
 }
 
 .copied-recording {
@@ -496,12 +454,13 @@
   height: 282px;
   background: black;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-direction: column;
   width: 748px;
   align-items: center;
-  border-radius: 24px;
+  border-radius: 20px;
   position: relative;
+  border: 2px solid;
 }
 
 .octave-number-container {
@@ -522,4 +481,22 @@
 
 .octave-button {
   margin-top: 12px;
+}
+
+.title-heading {
+  font-family: 'Audiowide', cursive !important;
+  color: white;
+  margin: 11px;
+}
+
+.links {
+  display: flex;
+  align-self: flex-end;
+  flex-direction: column;
+  margin-right: 5%;
+}
+
+.dev-link {
+  font-size: 40px;
+  color: white;
 }
