@@ -4,6 +4,7 @@
 	<title>Garageband Lite</title>
   <script src="jquery-3.2.1.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Alegreya" rel="stylesheet">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/stylesheets/garageband_lite.css" type="text/css">
 </head>
@@ -27,9 +28,21 @@
             <i class="fa fa-play" aria-hidden="true"></i>
           </div>
         </div>
-        <div id="timer-holder">
+          <div id="timer-holder">
           <!-- <h2 class="timer-heading">Current Timer: </h2> -->
-          <h2 class="timer-heading" id="timer">
+            <h2 class="timer-heading" id="timer"></h2>
+            <div id="octave-container">
+              <div class="timer-button" id="octave-decrease">
+                <i class="fa fa-minus octave-button" aria-hidden="true"></i>
+              </div>
+              <div class="octave-number-container">
+                <h2 class="octave-heading">OCTAVE</h2>
+                <h2 id="current-octave-heading"class="octave-toggle-text" > 3</h2 >
+              </div>
+              <div class="timer-button" id="octave-increase">
+                <i class="fa fa-plus octave-button" aria-hidden="true"></i>
+              </div>
+          </div>
           </div>
         <div id="recording-buttons">
           <div class= "recording-button" id="delete-recording">
@@ -66,19 +79,18 @@
     <div id="keyboard-holder">
       <div id='keyboard'></div>
     </div>
-    <div id="octave-toggle-container">
+    <!-- <div id="octave-toggle-container">
       <div class="octave-toggle" id="octave-increase">
         <h2 class="octave-toggle-text">Decrease Octave</h2 >
           <h3>(press ",")</h3>
       </div>
       <div class="octave-toggle" id="current-octave">
-        <h2 id="current-octave-heading"class="octave-toggle-text" >Current Octave: 3</h2 >
       </div>
       <div class="octave-toggle" id="octave-decrease">
         <h2 class="octave-toggle-text" >Increase Octave</h2>
           <h3>(press ".")</h3>
       </div>
-    </div>
+    </div> -->
   </div>
   <script src="bundle.js"></script>
 </body>

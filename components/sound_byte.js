@@ -110,10 +110,12 @@ export default class SoundByte extends Node {
   }
 
   playSound(seek) {
+    const { paused } = this.recording.timer;
+    
     if (seek) {
       this.sound.currentTime = seek;
     }
 
-  if (!this.key.soundFileMissing)  this.sound.play();
+  if (!this.key.soundFileMissing && !paused)  this.sound.play();
   }
 }

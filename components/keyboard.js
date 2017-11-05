@@ -51,13 +51,13 @@ class Keyboard {
 
   increaseOctaveListener() {
     $("#octave-increase").on("click",() => {
-      this.adjustOctave(-1);
+      this.adjustOctave(1);
     });
   }
 
   decreaseOctaveListener() {
     $("#octave-decrease").on("click",() => {
-      this.adjustOctave(1);
+      this.adjustOctave(-1);
     });
   }
 
@@ -78,10 +78,6 @@ class Keyboard {
     let max;
     let newOctave = this.octave + num;
 
-    if (this.instrument === "piano") {
-
-    } else if (this.instrument)
-
     switch (this.instrument) {
       case "piano":
         min = 0;
@@ -98,7 +94,7 @@ class Keyboard {
 
     if (newOctave > (min - 1) && newOctave < (max + 1)) this.octave = newOctave ;
 
-    $("#current-octave-heading").text(`Current Octave: ${this.octave}`);
+    $("#current-octave-heading").text(`${this.octave}`);
     this.keys.forEach((key) => {
       key.octave = this.octave;
       key.setAudio(this.instrument);

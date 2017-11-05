@@ -631,11 +631,14 @@ var SoundByte = function (_Node) {
   }, {
     key: "playSound",
     value: function playSound(seek) {
+      var paused = this.recording.timer.paused;
+
+
       if (seek) {
         this.sound.currentTime = seek;
       }
 
-      if (!this.key.soundFileMissing) this.sound.play();
+      if (!this.key.soundFileMissing && !paused) this.sound.play();
     }
   }]);
 
@@ -831,7 +834,7 @@ var Keyboard = function () {
       var _this2 = this;
 
       $("#octave-increase").on("click", function () {
-        _this2.adjustOctave(-1);
+        _this2.adjustOctave(1);
       });
     }
   }, {
@@ -840,7 +843,7 @@ var Keyboard = function () {
       var _this3 = this;
 
       $("#octave-decrease").on("click", function () {
-        _this3.adjustOctave(1);
+        _this3.adjustOctave(-1);
       });
     }
   }, {
@@ -867,7 +870,7 @@ var Keyboard = function () {
       var max = void 0;
       var newOctave = this.octave + num;
 
-      if (this.instrument === "piano") {} else if (this.instrument) switch (this.instrument) {
+      switch (this.instrument) {
         case "piano":
           min = 0;
           max = 5;
@@ -883,7 +886,7 @@ var Keyboard = function () {
 
       if (newOctave > min - 1 && newOctave < max + 1) this.octave = newOctave;
 
-      $("#current-octave-heading").text('Current Octave: ' + this.octave);
+      $("#current-octave-heading").text('' + this.octave);
       this.keys.forEach(function (key) {
         key.octave = _this5.octave;
         key.setAudio(_this5.instrument);
