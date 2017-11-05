@@ -39,7 +39,7 @@
 
 #keyboard-dashboard {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -138,7 +138,7 @@
   display: flex;
   justify-content: space-around;
   text-align: center;
-  width: 33%;
+  width: 25%;
   border-radius: 12px;
 }
 
@@ -245,8 +245,10 @@
 
 .dashboard-labels {
   color: white;
-  font-family: 'Alegreya', serif;  font-size: 20px;
+  font-family: 'Alegreya', serif;
+  font-size: 20px;
   text-align: center;
+  line-height: 2px;
 }
 
 .instruments-modal-hidden {
@@ -475,7 +477,7 @@
   margin: 10px 0px 0px 0px;
 }
 
-#octave-container {
+#octave-inner-container {
   display: flex;
 }
 
@@ -499,4 +501,9 @@
 .dev-link {
   font-size: 40px;
   color: white;
+}
+
+.octave-outer-container {
+  display: flex;
+  width: 25%
 }
