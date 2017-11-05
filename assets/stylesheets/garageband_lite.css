@@ -26,11 +26,11 @@
 }
 
 .piano-key {
-  height: 222px;
+  height: 150px;
   background-color: white;
-  width: 70px;
-  border: 1px solid;
-  border-radius: 10px;
+  width: 48px;
+  border: .5px solid;
+  border-radius: 9px;
   position: relative;
   display: flex;
   justify-content: center;
@@ -75,6 +75,8 @@
 
 #keyboard {
   display: flex;
+  top: 49%;
+  position: absolute;
 }
 
 .octave-toggle {
@@ -94,16 +96,17 @@
 
 .sharp-key {
   background-color: black;
-  height: 127px;
-  width: 36px;
+  height: 82px;
+  width: 26px;
   border: 1px solid;
   border-radius: 7px;
   position: absolute;
-  left: 50px;
+  left: 35px;
   z-index: 2;
   color: white;
   display: flex;
-  justify-content: center
+  justify-content: center;
+  top: -1px;
 }
 
 .key-label {
@@ -483,4 +486,16 @@
   align-items: center;
   font-size: 26px;
   margin-left: 20px;
+}
+
+#keyboard-holder {
+  height: 282px;
+  background: black;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  width: 748px;
+  align-items: center;
+  border-radius: 24px;
+  position: relative;
 }
