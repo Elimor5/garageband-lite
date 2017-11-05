@@ -3,6 +3,8 @@
 <head>
 	<title>Garageband Lite</title>
   <script src="jquery-3.2.1.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/stylesheets/garageband_lite.css" type="text/css">
 </head>
 <body id="body">
@@ -12,27 +14,35 @@
     <div id="timer-dashboard">
 
         <div id="timer-buttons">
-          <div class="timer-button" id='record-button'></div>
-          <div class="timer-button" id='stop-button'></div>
-          <div class="timer-button" id='pause-button'></div>
-          <div class="timer-button" id='play-button'></div>
+          <div class="timer-button" id='record-button'>
+            <i class="fa fa-circle" aria-hidden="true"></i>
+          </div>
+          <div class="timer-button" id='stop-button'>
+            <i class="fa fa-stop" aria-hidden="true"></i>
+          </div>
+          <div class="timer-button" id='pause-button'>
+            <i class="fa fa-pause" aria-hidden="true"></i>
+          </div>
+          <div class="timer-button" id='play-button'>
+            <i class="fa fa-play" aria-hidden="true"></i>
+          </div>
         </div>
         <div id="timer-holder">
-          <h2 class="timer-heading">Current Timer: </h2>
+          <!-- <h2 class="timer-heading">Current Timer: </h2> -->
           <h2 class="timer-heading" id="timer">
           </div>
         <div id="recording-buttons">
           <div class= "recording-button" id="delete-recording">
-            Delete
+            <i class="fa fa-trash" aria-hidden="true"></i>
           </div>
           <div class= "recording-button" id="split-recording">
-            Split
+            <i class="fa fa-scissors" aria-hidden="true"></i>
           </div>
           <div class= "recording-button" id="copy-recording">
-            Copy
+            <i class="fa fa-clone" aria-hidden="true"></i>
           </div>
           <div class= "recording-button" id="paste-recording">
-            Paste
+            <i class="fa fa-clipboard" aria-hidden="true"></i>
           </div>
         </div>
     </div>

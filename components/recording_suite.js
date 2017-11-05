@@ -67,7 +67,6 @@ export default class RecordingSuite {
         const { timer, selectedInstrument, dashboard, original } = copiedRecording;
 
         dashboard.updateSelectedInstrument(original.selectedInstrument);
-        debugger
         recordings.push(copiedRecording);
         this.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
         this.copiedRecording = null;

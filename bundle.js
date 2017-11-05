@@ -1363,7 +1363,6 @@ var RecordingSuite = function () {
 
 
           dashboard.updateSelectedInstrument(original.selectedInstrument);
-          debugger;
           recordings.push(copiedRecording);
           _this4.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
           _this4.copiedRecording = null;
