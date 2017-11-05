@@ -46,6 +46,7 @@ export default class Recording extends LinkedList {
       class: "sound-byte-visual"
     });
     this.visual.css({ left: `${startPosition}` });
+    this.visual.attr({draggable: "true"});
     return this.visual;
   }
 

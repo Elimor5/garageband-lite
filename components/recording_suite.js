@@ -89,6 +89,30 @@ export default class RecordingSuite {
     copiedRecording.setRecordingStartPos(time);
   }
 
+  moveRecording(targetVisual, offset ) {
+    this.recordings.forEach((recording) => {
+      const { currentRecording } = recording.timer;
+
+      if (recording.visual[0] === targetVisual && !currentRecording) {
+
+        // recording.visual.addClass("draggable");
+        // $("draggable").on("drop", (e) => {
+        //   e.preventDefault();
+        // });
+
+
+        const startTime = recording.startTime * 10;
+        let offsetFromStartPos = startTime + offset;
+        if (offsetFromStartPos < 0) offsetFromStartPos = 0;
+
+        recording.setRecordingStartPos(offsetFromStartPos);
+
+        // recording.visual.removeClass("draggable");
+
+      }
+    });
+  }
+
   addRecordSuiteListeners() {
     this.deleteRecordingListener();
     this.splitRecordingListener();

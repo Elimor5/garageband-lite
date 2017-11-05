@@ -326,6 +326,7 @@
   height: 64px;
   width: 100%;
   border: solid 1px white;
+  border-right: none !important;
   margin-bottom: 1px;
   position: relative;
 }

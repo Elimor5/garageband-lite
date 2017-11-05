@@ -97,8 +97,8 @@ class Ticker {
       updateTimeVariables(offset);
       setCurrentTime();
       pauseTimer();
-    
-      if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
+
+      // if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
 
       cursor.seek(offset);
     });

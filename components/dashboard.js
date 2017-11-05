@@ -19,7 +19,7 @@ class Dashboard {
 
   addInstrument(instrumentType) {
     const id = this.instruments.length;
-    const newInstrument = new Instrument(id, instrumentType);
+    const newInstrument = new Instrument(id, instrumentType, this);
     newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
 
     this.instruments.push(newInstrument);

@@ -343,6 +343,7 @@ var Recording = function (_LinkedList) {
         class: "sound-byte-visual"
       });
       this.visual.css({ left: '' + startPosition });
+      this.visual.attr({ draggable: "true" });
       return this.visual;
     }
   }, {
@@ -702,7 +703,7 @@ var Dashboard = function () {
     key: 'addInstrument',
     value: function addInstrument(instrumentType) {
       var id = this.instruments.length;
-      var newInstrument = new _instrument2.default(id, instrumentType);
+      var newInstrument = new _instrument2.default(id, instrumentType, this);
       newInstrument.addEventListener(this.updateSelectedInstrument.bind(this));
 
       this.instruments.push(newInstrument);
@@ -962,11 +963,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Instrument = function () {
-  function Instrument(id, instrumentType) {
+  function Instrument(id, instrumentType, dashboard) {
     _classCallCheck(this, Instrument);
 
     this.id = id;
     this.instrumentType = instrumentType;
+    this.recordingSuite = dashboard.recordingSuite;
     this.soundByteContainer = "";
     this.instrumentLabel = "";
     this.createVisual();
@@ -986,6 +988,8 @@ var Instrument = function () {
         id: this.instrumentType + "-" + this.id + "-soundByte",
         class: "sound-byte-container"
       });
+
+      this.createDragoverEvent();
 
       this.instrumentLabel = $('<div/>', {
         id: this.instrumentType + "-" + this.id + "-label",
@@ -1033,6 +1037,19 @@ var Instrument = function () {
       this.instrumentLabel.on("click", function () {
         updateSelectedInstrument(_this);
       });
+    }
+  }, {
+    key: "createDragoverEvent",
+    value: function createDragoverEvent() {
+      var _this2 = this;
+
+      this.soundByteContainer[0].ondragend = function (e) {
+        e.preventDefault();
+        var targetVisual = e.target;
+        var offset = e.offsetX;
+
+        _this2.recordingSuite.moveRecording(targetVisual, offset);
+      };
     }
   }]);
 
@@ -1395,6 +1412,31 @@ var RecordingSuite = function () {
       copiedRecording.setRecordingStartPos(time);
     }
   }, {
+    key: "moveRecording",
+    value: function moveRecording(targetVisual, offset) {
+      this.recordings.forEach(function (recording) {
+        var currentRecording = recording.timer.currentRecording;
+
+
+        if (recording.visual[0] === targetVisual && !currentRecording) {
+
+          // recording.visual.addClass("draggable");
+          // $("draggable").on("drop", (e) => {
+          //   e.preventDefault();
+          // });
+
+
+          var startTime = recording.startTime * 10;
+          var offsetFromStartPos = startTime + offset;
+          if (offsetFromStartPos < 0) offsetFromStartPos = 0;
+
+          recording.setRecordingStartPos(offsetFromStartPos);
+
+          // recording.visual.removeClass("draggable");
+        }
+      });
+    }
+  }, {
     key: "addRecordSuiteListeners",
     value: function addRecordSuiteListeners() {
       this.deleteRecordingListener();
@@ -1539,7 +1581,7 @@ var Ticker = function () {
         setCurrentTime();
         pauseTimer();
 
-        if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
+        // if (recordingSuite.selectedRecording) recordingSuite.selectedRecording.setRecordingStartPos(offset);
 
         cursor.seek(offset);
       });

@@ -1,7 +1,8 @@
 class Instrument {
-  constructor(id,instrumentType) {
+  constructor(id,instrumentType, dashboard) {
     this.id = id;
     this.instrumentType = instrumentType;
+    this.recordingSuite = dashboard.recordingSuite;
     this.soundByteContainer = "";
     this.instrumentLabel = "";
     this.createVisual();
@@ -18,6 +19,8 @@ class Instrument {
       id: `${this.instrumentType}-${this.id}-soundByte`,
       class: "sound-byte-container"
     });
+
+    this.createDragoverEvent();
 
     this.instrumentLabel = $('<div/>', {
       id: `${this.instrumentType}-${this.id}-label`,
@@ -60,6 +63,16 @@ class Instrument {
     this.instrumentLabel.on("click", () => {
       updateSelectedInstrument(this);
     });
+  }
+
+  createDragoverEvent() {
+    this.soundByteContainer[0].ondragend = (e) => {
+      e.preventDefault();
+      const targetVisual = e.target;
+      const offset = e.offsetX;
+
+      this.recordingSuite.moveRecording(targetVisual, offset);
+    };
   }
 }
 
