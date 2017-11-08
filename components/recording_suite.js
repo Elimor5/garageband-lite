@@ -64,19 +64,22 @@ export default class RecordingSuite {
       const { selectedRecording, copiedRecording, recordings } = this;
 
       if (copiedRecording) {
-        const { timer, selectedInstrument, dashboard, original } = copiedRecording;
-
-        dashboard.updateSelectedInstrument(original.selectedInstrument);
+        const { timer, selectedInstrument, dashboard } = copiedRecording;
         recordings.push(copiedRecording);
         this.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
-        this.copiedRecording = null;
+
         copiedRecording.original.visual.removeClass("copied-recording");
+
+        delete copiedRecording.original
+        this.copiedRecording = null;
       }
     });
   }
 
   copyRecording(selectedRecording) {
-    const { timer, dashboard, startTime, endTime, nodes } = selectedRecording;
+    const { timer, dashboard, startTime, endTime, nodes, selectedInstrument } = selectedRecording;
+    dashboard.updateSelectedInstrument(selectedInstrument);
+
     const copiedRecording = new Recording(dashboard, startTime);
     const copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
 
@@ -94,21 +97,11 @@ export default class RecordingSuite {
       const { currentRecording } = recording.timer;
 
       if (recording.visual[0] === targetVisual && !currentRecording) {
-
-        // recording.visual.addClass("draggable");
-        // $("draggable").on("drop", (e) => {
-        //   e.preventDefault();
-        // });
-
-
         const startTime = recording.startTime * 10;
         let offsetFromStartPos = startTime + offset;
         if (offsetFromStartPos < 0) offsetFromStartPos = 0;
 
         recording.setRecordingStartPos(offsetFromStartPos);
-
-        // recording.visual.removeClass("draggable");
-
       }
     });
   }

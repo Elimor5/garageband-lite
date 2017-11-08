@@ -404,7 +404,6 @@ var Recording = function (_LinkedList) {
         recordingSuite.selectedRecording = this;
         this.visual.addClass("selected-recording");
       }
-      debugger;
     }
   }, {
     key: 'setRecordingStartPos',
@@ -1384,15 +1383,15 @@ var RecordingSuite = function () {
         if (copiedRecording) {
           var timer = copiedRecording.timer,
               selectedInstrument = copiedRecording.selectedInstrument,
-              dashboard = copiedRecording.dashboard,
-              original = copiedRecording.original;
+              dashboard = copiedRecording.dashboard;
 
-
-          dashboard.updateSelectedInstrument(original.selectedInstrument);
           recordings.push(copiedRecording);
           _this4.pasteRecording(copiedRecording, timer.totalElapsedTime * 10);
-          _this4.copiedRecording = null;
+
           copiedRecording.original.visual.removeClass("copied-recording");
+
+          delete copiedRecording.original;
+          _this4.copiedRecording = null;
         }
       });
     }
@@ -1403,7 +1402,10 @@ var RecordingSuite = function () {
           dashboard = selectedRecording.dashboard,
           startTime = selectedRecording.startTime,
           endTime = selectedRecording.endTime,
-          nodes = selectedRecording.nodes;
+          nodes = selectedRecording.nodes,
+          selectedInstrument = selectedRecording.selectedInstrument;
+
+      dashboard.updateSelectedInstrument(selectedInstrument);
 
       var copiedRecording = new _recording2.default(dashboard, startTime);
       var copiedSoundBytes = selectedRecording.dupSoundBytes(copiedRecording);
@@ -1425,20 +1427,11 @@ var RecordingSuite = function () {
 
 
         if (recording.visual[0] === targetVisual && !currentRecording) {
-
-          // recording.visual.addClass("draggable");
-          // $("draggable").on("drop", (e) => {
-          //   e.preventDefault();
-          // });
-
-
           var startTime = recording.startTime * 10;
           var offsetFromStartPos = startTime + offset;
           if (offsetFromStartPos < 0) offsetFromStartPos = 0;
 
           recording.setRecordingStartPos(offsetFromStartPos);
-
-          // recording.visual.removeClass("draggable");
         }
       });
     }

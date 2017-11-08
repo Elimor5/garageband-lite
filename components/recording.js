@@ -97,7 +97,6 @@ export default class Recording extends LinkedList {
       recordingSuite.selectedRecording = this;
       this.visual.addClass("selected-recording");
     }
-    debugger
   }
 
   setRecordingStartPos(pos) {
