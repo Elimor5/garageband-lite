@@ -5,13 +5,13 @@
 
 [Live](https://elimor5.github.io/garageband-lite/)
 
-###components
+### Components
 
 Garageband Lite consists of two main components: the recording dashboard and the keyboard.
 
 Users can play music on the keyboard by either clicking on a key or by using the computer keyboard.  Instruments can be added/changed by clicking on the "Add Instrument" button,  adding the instrument to the recording dashboard.
 
-###Playing Notes
+### Playing Notes
 
 When the dashboard isn't recording, users can produce sounds by clicking on the screen keyboard or by using the computer keyboard to create music. This is accomplished by calling play() on an html5 audio object.
 
@@ -51,7 +51,7 @@ startPlay() {
  }
  ```
 
-###Recording
+### Recording
 
 When the user begins recording, a few things happen. First, a new recording object is created and appended to the selected instrument (highlighted in light blue).
 
@@ -205,7 +205,7 @@ addTick(time) {
 }
 ```
 
-###Recursive Algorithm
+### Recursive Algorithm
 
 Garageband Lite harnesses the power of linked lists to easily append new soundbyte nodes in constant time. A recursive algorithm is implemented to traverse each node by calling itself on the node's child. A callback is called on each node. A similar function is used to call a callback on one specific node (based on a requested time). The recursive algorithm is utilized in playback and in manipulating recordings, as discussed further below.
 
@@ -226,7 +226,7 @@ Garageband Lite harnesses the power of linked lists to easily append new soundby
   }
   ```
 
-###Playback
+### Playback
 
 Playback of the recorded soundbytes is accomplished by calling play on each individual soundByte. This is done for every recording in the dashboard.
 
@@ -273,19 +273,19 @@ play() {
 }
 ```
 
-###Asynchronous Playback
+### Asynchronous Playback
 
 Asynchronous callbacks allow for soundbytes to be played simultaneously in the dashboard. In other words, the strings instrument can be playing while the piano is playing in the background. Both will play together seamlessly without having to wait for one soundbyte to end before the next one plays.
 
 
 
-###Recording Manipulation
+### Recording Manipulation
 
 My goal was to give the user as close of a Garageband UX as possible, which meant including the ability to copy and paste recordings, split a recording into 2 separate recordings, delete a recording, or simply moving a recording to a different start time. Recursively traversing each soundbyte node within each modified recording was a requirement, because modifying the recording alone was not going to modify the soundbytes.
 
  ![copy_split](./assets/readme_images/copy_split.png)
 
-###Copying Recordings
+### Copying Recordings
 
 One issue I faced was with cloning recordings. Just copying the object did nothing but create a reference to the original object that was copied, which meant that any further modification to the original would modify the copy as well. No good. The solution was to create a new recording, copying the properties of  the original recording and setting them as properties of the copied recording. I did the same for each soundbyte of the original recording, creating new soundbytes and copying all the properties of the originals.
 
@@ -320,7 +320,7 @@ dupSoundBytes(newRecording) {
 ```
 
 
-###Moving a Recording
+### Moving a Recording
 
 Moving a recording was relatively simple. I made each recording draggable by setting the draggable property of the recording's div to true.
 
@@ -372,6 +372,6 @@ moveRecording(targetVisual, offset ) {
 
 ```
 
-###Plans for future updates
+### Plans for future updates
 
 My plans for future updates include adding the ability to zoom into the dashboard to be able to view up to 16th notes and manipulate on a granular level. I also would like to implement a backend to be able to save the recordings and perhaps make them downloadable as mp3s. I would like to add a metronome as well to be played when recording.

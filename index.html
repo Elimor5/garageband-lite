@@ -79,30 +79,36 @@
     </div>
   </div>
   <div id='keyboard-dashboard'>
-    <div id="keyboard-holder">
-      <div class="piano-heading">
-        <h1 class="title-heading">Garageband Lite</h1>
-        <h1 class="title-heading">by Eli Mordechai</h1>
+    <div id="keyboard-dashboard-inner">
+      <div id="keyboard-holder">
+        <div class="piano-heading">
+          <h1 class="title-heading">Garageband Lite</h1>
+          <h1 class="title-heading">by Eli Mordechai</h1>
+        </div>
+        <div class="links">
+          <a class="dev-link" target="_blank" href="https://github.com/Elimor5"><i class="fa fa-github git-in dev-icon"></i></a>
+          <a class="dev-link" target="_blank" href="https://www.linkedin.com/in/eli-mordechai"><i class="fa fa-linkedin git-in dev-icon" aria-hidden="true"></i></a>
+          <a class="dev-link" target="_blank" href="https://angel.co/eli-mordechai-1"><i class="fa fa-angellist git-in dev-icon" aria-hidden="true"></i></a>
+        </div>
+        <div id='keyboard'></div>
       </div>
-      <div class="links">
-        <a class="dev-link" target="_blank" href="https://github.com/Elimor5"><i class="fa fa-github git-in dev-icon"></i></a>
-        <a class="dev-link" target="_blank" href="https://www.linkedin.com/in/eli-mordechai"><i class="fa fa-linkedin git-in dev-icon" aria-hidden="true"></i></a>
-        <a class="dev-link" target="_blank" href="https://angel.co/eli-mordechai-1"><i class="fa fa-angellist git-in dev-icon" aria-hidden="true"></i></a>
+      <div id='instructions'>
+        <h2 class="instructions-header">Instructions</h2>
+        <ul class='.instruction-list'>
+          <li class="instruction-item" >Click on add instrument on the bottom left corner of the dashboard</li>
+          <li class="instruction-item" >Or you can just click on the record button (default instrument is piano)</li>
+          <li class="instruction-item" >Clicking on the piano keys or using the keyboard while recording will create visual sound-bytes in the dashboard</li>
+          <li class="instruction-item" >You can add more instruments and record new sounds as well, adding multiple instruments to your musical masterpiece!</li>
+        </ul>
+        <h2 class="instructions-header">Keyboard Shortcuts</h2>
+        <ul class='.instruction-list'>
+          <li>"Space" - Play/Pause</li>
+          <li>"Shift" + "Space" - Beging Recording</li>
+          <li>"." - Increase Octave</li>
+          <li>"," - Decrease Octave</li>
+        </ul>
       </div>
-      <div id='keyboard'></div>
     </div>
-    <!-- <div id="octave-toggle-container">
-      <div class="octave-toggle" id="octave-increase">
-        <h2 class="octave-toggle-text">Decrease Octave</h2 >
-          <h3>(press ",")</h3>
-      </div>
-      <div class="octave-toggle" id="current-octave">
-      </div>
-      <div class="octave-toggle" id="octave-decrease">
-        <h2 class="octave-toggle-text" >Increase Octave</h2>
-          <h3>(press ".")</h3>
-      </div>
-    </div> -->
   </div>
   <script src="bundle.js"></script>
 </body>
