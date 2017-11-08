@@ -1,5 +1,6 @@
 ## Garageband Lite
  *clone of the popular Mac OS X Garageband app*
+ 
  [Live Link](https://elimor5.github.io/garageband-lite/)
  
  ![first_image](./assets/readme_images/first_image.png)
