@@ -395,10 +395,16 @@ var Recording = function (_LinkedList) {
       if (selectedRecording === this) {
         recordingSuite.selectedRecording = null;
         this.visual.removeClass("selected-recording");
-      } else if (this.endTime && !selectedRecording) {
+      } else if (this.endTime) {
+
+        if (selectedRecording) {
+          selectedRecording.visual.removeClass("selected-recording");
+        }
+
         recordingSuite.selectedRecording = this;
         this.visual.addClass("selected-recording");
       }
+      debugger;
     }
   }, {
     key: 'setRecordingStartPos',
