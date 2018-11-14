@@ -26,7 +26,7 @@ startPlay() {
 }
 ```
 
- Event listeners are in place to track when the sound has begun and what octave and note is playing. When the keyboard is created, keys are individually initialized. It his here where the program  looks into the piano samples folder to find the sound file corresponding to the note played and its octave. This function is called again when the instrument is changed or when the octave is changed.
+ Event listeners are in place to track when the sound has begun and what octave and note is playing. When the keyboard is created, keys are individually initialized. It is here where the program  looks into the piano samples folder to find the sound file corresponding to the note played and its octave. This function is called again when the instrument is changed or when the octave is changed.
 
  ```javascript
  //components/key.js
